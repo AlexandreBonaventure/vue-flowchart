@@ -1,0 +1,61 @@
+<script>
+
+  // import { map } from 'lodash'
+  import portWidget from './PortWidget.vue'
+
+  export default {
+    name: "BasicNodeWidget",
+    components: {
+      portWidget,
+    },
+    props: {
+      name: { default: 'Node' },
+			node: {},
+			inPorts: { default: () => [] },
+			outPorts: { default: () => [] },
+			color: { default: 'rgb(50,50,50)' },
+			removeAction: { default: () => (() => { console.log("remove node")}) },
+		},
+    data() {
+      return {}
+    },
+    methods: {
+      onMouseDown(){
+        this.engine.setSelectedNode(this.node)
+      }
+    },
+    computed: {
+      styles() {
+        return {
+          top: this.node.y,
+          left: this.node.x,
+        }
+      },
+      classes() {
+        return 'node'+ (this.engine.state.selectedNode && this.engine.state.selectedNode.id == this.node.id ? ' selected' : '')
+      },
+    },
+  }
+
+</script>
+
+<template lang="jade">
+
+  div.basic-node(:style="{ backgroundColor: color }")
+    .title
+      .name Add Card to User
+      .fa.fa-close
+    .ports
+      .in
+        .in-port(v-for="port in inPorts", :key="port.name")
+          port-widget(:name='port.name', :node='node')
+      .out
+        .out-port(v-for="port in outPorts", :key="port.name")
+          port-widget(:name='port.name', :node='node')
+          .name {{ port.display }}
+
+</template>
+
+<style lang="css">
+
+</style>
