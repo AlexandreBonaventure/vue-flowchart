@@ -35,7 +35,7 @@
   		return h(
         'div',
         {
-  				className:'node-view',
+  				class:'node-view',
   				style:{
   					transform: 'scale('+this.engine.state.zoom/100.0+') translate('+this.engine.state.offsetX+'px,'+this.engine.state.offsetY+'px)',
   					width: '100%',

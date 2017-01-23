@@ -14,7 +14,7 @@ module.exports = React.createClass({
 		return {
 			engine: null,
 			newPoint: function(link,pointID){
-				
+
 			}
 		};
 	},
@@ -27,17 +27,17 @@ module.exports = React.createClass({
 					height: '100%'
 				}},
 				_.map(this.props.engine.state.links,function(link){
-					if(link.points.length < 2){
+					if(link.points.length < 2) {
 						return;
 					}else{
-						if(link.source !== null){
+						if(link.source !== null) {
 							link.points[0] = this.props.engine.getPortCenter(this.props.engine.getNode(link.source),link.sourcePort);
 						}
-						if(link.target !== null){
+						if(link.target !== null) {
 							link.points[link.points.length-1] = this.props.engine.getPortCenter(this.props.engine.getNode(link.target),link.targetPort);
 						}
 					}
-					
+
 					return React.createElement(LinkWidget,{
 						key: link.id,
 						newPoint: function(pointID){

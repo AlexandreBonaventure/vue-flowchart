@@ -1,4 +1,5 @@
 var _ = require("lodash");
+import { set, delete } from 'vue'
 /**
  * @author Dylan Vorster
  */
@@ -21,25 +22,38 @@ module.exports = function(){
 		},
 
 		repaintLinks: function(links){
-			this.state.updatingNodes = {};
-			this.state.updatingLinks = {};
-			links.forEach(function(link){
-				this.state.updatingLinks[link.id] = link;
-			}.bind(this));
-			this.update();
+      set(this.state, 'updatingNodes', {});
+      set(this.state, 'updatingLinks', {});
+			links.forEach((link) => {
+				set(this.state.updatingLinks, link.id, link);
+			})
+			this.update()
 		},
 
 		repaintNodes: function(nodes){
-			this.state.updatingNodes = {};
-			this.state.updatingLinks = {};
+			// this.state.updatingNodes = {};
+			// this.state.updatingLinks = {};
+      set(this.state, 'updatingNodes', {});
+      set(this.state, 'updatingLinks', {});
 
 			//store the updating node is's
-			nodes.forEach(function(node){
-				this.state.updatingNodes[node.id] = node;
-				this.getNodeLinks(node).forEach(function(link){
-					this.state.updatingLinks[link.id] = link;
-				}.bind(this));
-			}.bind(this));
+			nodes.forEach((node) => {
+				set(this.state.updatingNodes, node.id, node);
+				this.getNodeLinks(node).forEach((link) => {
+          console.log('link:', link);
+          set(this.state.updatingLinks, link.id, link)
+          if(link.points.length < 2) {
+						return;
+					}else{
+						if(link.source !== null) {
+							set(link.points, 0, this.getPortCenter(this.getNode(link.source),link.sourcePort))
+						}
+						if(link.target !== null) {
+							set(link.points, link.points.length-1, this.getPortCenter(this.getNode(link.target),link.targetPort))
+						}
+					}
+				})
+			})
 
 			this.update();
 		},
@@ -68,7 +82,7 @@ module.exports = function(){
 		},
 
 		removeListener: function(id){
-			delete this.state.listeners[id];
+			delete(this.state.listeners, id)
 		},
 
 		registerListener: function(cb){
@@ -148,7 +162,7 @@ module.exports = function(){
 		},
 
 		removeLink: function(link){
-			delete this.state.links[link.id];
+			delete(this.state.links, link.id)
 			this.update();
 		},
 
@@ -160,7 +174,7 @@ module.exports = function(){
 			}.bind(this));
 
 			//remove the node
-			delete this.state.nodes[node.id];
+      delete(this.state.nodes, node.id)
 			this.update();
 		},
 
@@ -202,7 +216,7 @@ module.exports = function(){
 				points: []
 			});
 
-			this.state.links[FinalLink.id] = FinalLink;
+			set(this.state.links, FinalLink.id, FinalLink)
 			return FinalLink;
 		},
 
@@ -219,7 +233,7 @@ module.exports = function(){
 				x: point.x,
 				y: point.y
 			});
-			this.state.nodes[FinalNode.id] = FinalNode;
+			set(this.state.nodes, FinalNode.id, FinalNode)
 		},
 
 		getLink: function(id){

@@ -22,7 +22,14 @@
     methods: {
       onMouseDown(){
         this.engine.setSelectedNode(this.node)
-      }
+      },
+      getName(port) {
+        return typeof port === 'object' ? port.name : port
+      },
+      getDisplay(port) {
+        return typeof port === 'object' ? port.display : port
+
+      },
     },
     computed: {
       styles() {
@@ -49,16 +56,17 @@
 
   div.basic-node(:style="{ backgroundColor: color }")
     .title
-      .name Add Card to User
-      .fa.fa-close
+      .name {{ name }}
+      .fa.fa-close(@click="removeAction")
     .ports
       .in
         .in-port(v-for="port in formattedInPorts", :key="port")
-          port-widget(:name='port', :node='node')
+          port-widget(:name='getName(port)', :node='node')
+          .name {{ getDisplay(port) }}
       .out
         .out-port(v-for="port in formattedOutPorts", :key="port")
           port-widget(:name='port', :node='node')
-          .name {{ port.display }}
+          .name {{ getDisplay(port) }}
 
 </template>
 

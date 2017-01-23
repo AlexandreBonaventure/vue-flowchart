@@ -1,6 +1,6 @@
 <script>
 
-  // import { map } from 'lodash'
+  import { merge } from 'lodash'
 
   export default {
     name: "LinkWidget",
@@ -43,63 +43,82 @@
     		return h(
           'g',
           {
-            key: `point-${ this.link.points[pointIndex].id }`
+            key: `point-${ this.link.points[pointIndex].id }`,
           },
-    			h(
-            'circle',
-            {
-      				className:'point pointui',
-      				cx:this.getPoint(pointIndex).x,
-      				cy:this.getPoint(pointIndex).y,
-      				r:5,
-      			}
-          ),
-    			(
-            'circle',
-            {
-      				className:'point',
-      				'data-linkid':this.props.link.id,
-      				'data-id':this.props.link.points[pointIndex].id,
-      				cx:this.getPoint(pointIndex).x,
-      				cy:this.getPoint(pointIndex).y,
-      				r:15,
-      				opacity: 0,
-      				onMouseLeave: () => {
-      					this.setSelected(false)
-      				},
-      				onMouseEnter: () => {
-      					this.setSelected(true)
-      				},
-    			})
-    		);
+          [
+            h(
+              'circle',
+              {
+        				class: 'point pointui',
+                attrs: {
+                  cx: this.getPoint(pointIndex).x,
+                  cy: this.getPoint(pointIndex).y,
+                  r: 5,
+                },
+        			}
+            ),
+      			(
+              'circle',
+              {
+        				class: 'point',
+                attrs: {
+                  'data-linkid': this.link.id,
+                  'data-id': this.link.points[pointIndex].id,
+                  cx: this.getPoint(pointIndex).x,
+                  cy: this.getPoint(pointIndex).y,
+                  r: 15,
+                  opacity: 0,
+                },
+                on: {
+                  mouseleave: () => {
+                    this.setSelected(false)
+                  },
+                  mouseenter: () => {
+                    this.setSelected(true)
+                  },
+                },
+        			}
+            )
+          ]
+    		)
     	},
 
-    	generateLink: function(extraProps){
-    		// var Bottom = React.DOM.path(_.merge({
-    		// 	className:this.state.selected?'selected':'',
-    		// 	strokeWidth:this.props.width,
-    		// 	stroke:'black'
-    		// },extraProps));
-    		//
-    		// var Top = React.DOM.path(_.merge({
-    		// 	onMouseLeave: function(){
-    		// 		this.setSelected(false);
-    		// 	}.bind(this),
-    		// 	onMouseEnter: function(){
-    		// 		this.setSelected(true);
-    		// 	}.bind(this),
-    		// 	strokeOpacity:0,
-    		// 	strokeWidth: 20,
-    		// 	onContextMenu: function(event){
-    		// 		event.preventDefault();
-    		// 		this.props.engine.removeLink(this.props.link);
-    		// 	}.bind(this),
-    		// },extraProps));
-    		//
-    		// return React.DOM.g({key:'link-'+extraProps.id},
-    		// 	Bottom,
-    		// 	Top
-    		// );
+    	generateLink: function(h, extraProps){
+    		var Bottom = h('path', merge({
+    			class: this.selected ? 'selected' : '',
+          attrs: {
+            'stroke-width': this.width,
+            stroke: 'black',
+          },
+    		},extraProps))
+
+    		var Top = h('path', merge({
+          on: {
+            mouseleave: () => {
+              this.setSelected(false);
+            },
+            mouseenter: () => {
+              this.setSelected(true);
+            },
+            contextmenu: (event) => {
+      				event.preventDefault();
+      				this.engine.removeLink(this.link)
+      			},
+          },
+          attrs: {
+            'stroke-opacity':0,
+            'stroke-width': 20,
+          },
+    		},extraProps))
+
+    		return h(
+          'g',
+          { key: `link-${extraProps.id}` },
+          [
+            Bottom,
+            Top
+          ],
+    		)
     	},
     },
     computed: {
@@ -119,27 +138,27 @@
   				margin = 5
   			}
 
-  			paths.push(this.generateLink({
-  				id: '0',
-  				onMouseDown: function(event){
-  					var point = this.props.engine.getRelativeMousePoint(event);
-  					point.id = this.props.engine.UID();
-  					this.props.link.points.splice(1,0,point);
-  					this.forceUpdate();
-  					this.props.newPoint(point.id);
-  				}.bind(this),
-  				d:
-  					 " M"+this.getPoint(0).x+" "+this.getPoint(0).y
-  					+" C"+(this.getPoint(0).x+margin)+" "+this.getPoint(0).y
-  					+" " +(this.getPoint(1).x-margin)+" "+this.getPoint(1).y
-  					+" " +this.getPoint(1).x+" "+this.getPoint(1).y
-  			}));
-  			if(this.props.link.target === null){
-  				paths.push(this.generatePoint(1));
+  			paths.push(this.generateLink(h, {
+          attrs: {
+            id: '0',
+            d: ` M${this.getPoint(0).x} ${this.getPoint(0).y} C${this.getPoint(0).x + margin} ${this.getPoint(0).y} ${this.getPoint(1).x-margin} ${this.getPoint(1).y} ${this.getPoint(1).x} ${this.getPoint(1).y}`,
+          },
+          on: {
+            mousedown: (event) => {
+    					var point = this.engine.getRelativeMousePoint(event);
+    					point.id = this.engine.UID();
+    					this.link.points.splice(1,0,point);
+    					// this.forceUpdate();
+    					this.newPoint(point.id);
+    				},
+          },
+  			}))
+  			if (this.link.target === null) {
+  				paths.push(this.generatePoint(h, 1))
   			}
   		}else{
   			var ds = [];
-  			if(this.props.smooth){
+  			if(this.smooth){
   				ds.push(" M"+this.getPoint(0).x+" "+this.getPoint(0).y+" C "+(this.getPoint(0).x+50)+" "+this.getPoint(0).y+" "+this.getPoint(1).x+" "+this.getPoint(1).y+" "+this.getPoint(1).x+" "+this.getPoint(1).y);
   				for(var i = 1;i < points.length-2;i++){
   					ds.push(" M "+this.getPoint(i).x+" "+this.getPoint(i).y+" L "+this.getPoint(i+1).x+" "+this.getPoint(i+1).y);
@@ -152,47 +171,50 @@
   				}
   			}
 
-  			paths = ds.map(function(data,index){
-  				return this.generateLink({
-  					id:index,
-  					'data-link':this.props.link.id,
-  					'data-point':index,
-  					onMouseDown: function(event){
-  						var point = this.props.engine.getRelativeMousePoint(event);
-  						point.id = this.props.engine.UID();
-  						this.props.link.points.splice(index+1,0,point);
-  						this.forceUpdate();
-  						this.props.newPoint(point.id);
-  					}.bind(this),
-  					d:data
-  				});
-  			}.bind(this));
+  			paths = ds.map((data,index) => {
+  				return this.generateLink(h, {
+            attrs: {
+              id:index,
+    					'data-link': this.link.id,
+    					'data-point': index,
+              d: data,
+            },
+  					on: {
+              mousedown: (event) => {
+                var point = this.engine.getRelativeMousePoint(event)
+                point.id = this.engine.UID()
+                this.link.points.splice(index+1,0,point)
+                this.newPoint(point.id)
+              },
+            },
+  				})
+  			})
 
 
   			//render the circles
   			for(var i = 1;i < points.length-1;i++){
-  				paths.push(this.generatePoint(i));
+  				paths.push(this.generatePoint(h, i))
   			}
 
-  			if(this.props.link.target === null){
-  				paths.push(this.generatePoint(points.length-1));
+  			if (this.link.target === null) {
+  				paths.push(this.generatePoint(h, points.length-1))
   			}
   		}
 
 
   		return (
-  			React.DOM.g(null,	paths)
+  			h('g', null,	paths)
   		)
     }
   }
 
 </script>
 
-<template lang="jade">
+<!--template lang="jade">
   g
 
 
-</template>
+</template-->
 
 <style lang="css">
 

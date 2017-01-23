@@ -8,24 +8,24 @@ export default function factory() {
   const model = {links:[],nodes: []};
 
   generateSet(model,0,0);
-  generateSet(model,800,0);
-  generateSet(model,1600,0);
-  generateSet(model,2400,0);
-
-  generateSet(model,0,300);
-  generateSet(model,800,300);
-  generateSet(model,1600,300);
-  generateSet(model,2400,300);
-
-  generateSet(model,0,600);
-  generateSet(model,800,600);
-  generateSet(model,1600,600);
-  generateSet(model,2400,600);
-
-  generateSet(model,0,900);
-  generateSet(model,800,900);
-  generateSet(model,1600,900);
-  generateSet(model,2400,900);
+  // generateSet(model,800,0);
+  // generateSet(model,1600,0);
+  // generateSet(model,2400,0);
+  //
+  // generateSet(model,0,300);
+  // generateSet(model,800,300);
+  // generateSet(model,1600,300);
+  // generateSet(model,2400,300);
+  //
+  // generateSet(model,0,600);
+  // generateSet(model,800,600);
+  // generateSet(model,1600,600);
+  // generateSet(model,2400,600);
+  //
+  // generateSet(model,0,900);
+  // generateSet(model,800,900);
+  // generateSet(model,1600,900);
+  // generateSet(model,2400,900);
 
 
   Engine.registerNodeFactory({
