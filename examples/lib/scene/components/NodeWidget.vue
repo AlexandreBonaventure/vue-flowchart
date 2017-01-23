@@ -25,8 +25,8 @@
     computed: {
       styles() {
         return {
-          top: this.node.y,
-          left: this.node.x,
+          top: `${this.node.y}px`,
+          left: `${this.node.x}px`,
         }
       },
       classes() {

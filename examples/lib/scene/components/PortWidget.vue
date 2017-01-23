@@ -25,7 +25,7 @@
     },
     computed: {
       classes() {
-        return `port${this.state.selected ? ' selected' : ''}`
+        return `port${this.selected ? ' selected' : ''}`
       },
     },
   }

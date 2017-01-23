@@ -21,11 +21,6 @@
     created() {
       // this.generateModels(this.engine.state.nodes)
     },
-    methods: {
-      generateModels(nodes) {
-        return this.model = nodes.map((node) => this.engine.getNodeFactory(node.type).generateModel(node, this.engine))
-      },
-    },
     computed: {
       styles() {
         return {
@@ -33,12 +28,6 @@
           width: '100%',
           height: '100%',
         }
-      },
-      nodeComponent() {
-        return this.model && this.model.component
-      },
-      nodePropsData() {
-        return this.model && this.model.propsData
       },
     },
     render(h) {
@@ -53,20 +42,21 @@
   					height: '100%'
   				}
   			},
-  			map(this.engine.state.nodes, (node) =>
-  				h(
+  			map(this.engine.state.nodes, (node) => {
+          const model = this.engine.getNodeFactory(node.type).generateModel(node, this.engine)
+  				return h(
   					nodeWidget,
             {
               props: { key: node.id, node, engine: this.engine },
             },
   					[
               h(
-                this.engine.getNodeFactory(node.type).generateModel(node, this.engine).component,
-                { props: { key: node.id, node, engine: this.engine } }
+                model.component,
+                { props: model.propsData }
               )
             ]
           )
-  			)
+        })
   		)
   	}
   }

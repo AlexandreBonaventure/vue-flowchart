@@ -18,12 +18,15 @@
 </script>
 
 <template lang="jade">
-  div
-    |test
+  div.scene
     canvas-widget(:engine="engine")
 
 </template>
 
 <style lang="css">
+.scene {
+  width: 100%;
+  height: 100%;
+}
 
 </style>

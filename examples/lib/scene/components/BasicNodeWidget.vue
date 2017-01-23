@@ -27,12 +27,18 @@
     computed: {
       styles() {
         return {
-          top: this.node.y,
-          left: this.node.x,
+          top: `${this.node.y}px`,
+          left: `${this.node.x}px`,
         }
       },
       classes() {
         return 'node'+ (this.engine.state.selectedNode && this.engine.state.selectedNode.id == this.node.id ? ' selected' : '')
+      },
+      formattedInPorts() {
+        return Array.isArray(this.inPorts) ? this.inPorts : [this.inPorts]
+      },
+      formattedOutPorts() {
+        return Array.isArray(this.outPorts) ? this.outPorts : [this.outPorts]
       },
     },
   }
@@ -47,11 +53,11 @@
       .fa.fa-close
     .ports
       .in
-        .in-port(v-for="port in inPorts", :key="port.name")
-          port-widget(:name='port.name', :node='node')
+        .in-port(v-for="port in formattedInPorts", :key="port")
+          port-widget(:name='port', :node='node')
       .out
-        .out-port(v-for="port in outPorts", :key="port.name")
-          port-widget(:name='port.name', :node='node')
+        .out-port(v-for="port in formattedOutPorts", :key="port")
+          port-widget(:name='port', :node='node')
           .name {{ port.display }}
 
 </template>
