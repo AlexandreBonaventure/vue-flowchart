@@ -18805,11 +18805,13 @@ var vueFlowchart = { render: function render() {
     this.engine.registerNodeFactory({
       type: 'default',
       generateModel: function generateModel(model) {
+        var _this = this;
+
         return {
           component: basicNodeWidget,
           propsData: {
             removeAction: function removeAction() {
-              this.engine.removeNode(model);
+              _this.engine.removeNode(model);
             },
             color: model.data.color,
             node: model,

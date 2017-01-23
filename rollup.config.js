@@ -11,7 +11,9 @@ export default {
     commonjs({
       include: 'node_modules/**',
     }),
-    vue(),
+    vue({
+      css: null,
+    }),
     babel({
     exclude: ['node_modules/**', '*.vue'],
   }) ],
