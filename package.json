@@ -1,40 +1,41 @@
 {
-  "name": "vuex-plugin-jsdata",
+  "name": "vue-flowchart",
   "version": "0.1.0",
-  "description": "A vuex plugin to sync vuex store with jsdata-store",
-  "main": "dist/vuex-jsdata-plugin.js",
+  "description": "vue-flowchart",
+  "main": "dist/vue-flowchart.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rollup -c --name vuexjsdataplugin --input index.js --output dist/vuex-jsdata-plugin.js --format umd",
-    "serve": "NODE_PATH=$NODE_PATH:examples/lib budo examples/lib/index.js --open -d . --live -- -t [ vueify ] -t [ babelify --presets [ es2015 ] ]",
-    "dist": "NODE_PATH=$NODE_PATH:examples/lib browserify -e examples/lib/index.js -o dist/index.js -t vueify -t [ babelify --presets [ es2015 ] ] -t uglifyify -p [ minifyify --no-map ]"
+    "build": "rollup -c --name vue-flowchart --input index.js --output dist/vue-flowchart.js --format umd",
+    "serve": "NODE_PATH=$NODE_PATH:lib:examples/simple budo examples/simple/index.js --open -d . --live -- -t [ vueify ] -t babelify",
+    "//dist": "NODE_PATH=$NODE_PATH:examples/simple browserify -e examples/simple/index.js -o dist/index.js -t vueify -t [ babelify ] -t uglifyify -p [ minifyify --no-map ]"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AlexandreBonaventure/vuex-jsdata-plugin.git"
+    "url": "git+https://github.com/AlexandreBonaventure/vue-flowchart.git"
   },
   "keywords": [
-    "vuex",
-    "js-data",
-    "plugin",
-    "store",
-    "model",
-    "data"
+    "vue",
+    "vue.js",
+    "flow",
+    "chart",
+    "diagram"
   ],
   "author": "Alexandre Bonaventure Geissmann",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/AlexandreBonaventure/vuex-jsdata-plugin/issues"
+    "url": "https://github.com/AlexandreBonaventure/vue-flowchart/issues"
   },
-  "homepage": "https://github.com/AlexandreBonaventure/vuex-jsdata-plugin#readme",
+  "homepage": "https://github.com/AlexandreBonaventure/vue-flowchart#readme",
   "peerDependencies": {
-    "vue": ">= 1.x <= 2.x"
+    "vue": "2.x"
   },
   "dependencies": {
-    "lodash": "^4.13.1"
+    "lodash": "^4.13.1",
+    "lodash-es": "^4.17.4"
   },
   "devDependencies": {
     "babel-plugin-external-helpers": "^6.8.0",
+    "babel-plugin-transform-object-rest-spread": "^6.22.0",
     "babel-plugin-transform-runtime": "^6.15.0",
     "babel-preset-es2015": "^6.18.0",
     "babelify": "^7.3.0",
@@ -49,9 +50,11 @@
     "minifyify": "^7.3.4",
     "node-sass": "^4.2.0",
     "rollup": "^0.36.1",
-    "rollup-plugin-babel": "^2.6.1",
+    "rollup-plugin-babel": "^2.7.1",
+    "rollup-plugin-commonjs": "^7.0.0",
+    "rollup-plugin-node-resolve": "^2.0.0",
+    "rollup-plugin-vue": "^2.2.18",
     "uglifyify": "^3.0.4",
-    "vue": "^2.1.8",
     "vue-hot-reload-api": "^1.3.3",
     "vueify": "^9.4.0",
     "vueify-insert-css": "^1.0.0",

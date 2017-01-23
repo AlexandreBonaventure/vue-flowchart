@@ -1,6 +1,6 @@
 <script>
 
-  // import { map } from 'lodash'
+  // import { map } from 'lodash-es'
 
   export default {
     name: "PortWidget",

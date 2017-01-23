@@ -1,6 +1,6 @@
 <script>
 
-  // import { map } from 'lodash'
+  // import { map } from 'lodash-es'
   import portWidget from './PortWidget.vue'
 
   export default {

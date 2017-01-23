@@ -1,6 +1,6 @@
 <script>
 
-  import _ from 'lodash'
+  import _ from 'lodash-es'
   import linkWidget from './LinkWidget.vue'
 
   export default {

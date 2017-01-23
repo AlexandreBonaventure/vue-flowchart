@@ -1,10 +1,8 @@
-import EngineCore from '../Engine.js'
-import Vue from 'vue'
-import basicNodeWidget from '../components/BasicNodeWidget.vue'
-// var BasicNodeWidget = require("../src/widgets/BasicNodeWidget");
+import EngineCore from '../lib/src/Engine.js'
+
+const Engine = EngineCore()
 
 export default function factory() {
-  const Engine = EngineCore()
   const model = {links:[],nodes: []};
 
   generateSet(model,0,0);
@@ -27,39 +25,7 @@ export default function factory() {
   // generateSet(model,1600,900);
   // generateSet(model,2400,900);
 
-
-  Engine.registerNodeFactory({
-    type:'action',
-    generateModel: function(model){
-      return {
-        // component: Vue.extend(basicNodeWidget),
-        component: basicNodeWidget,
-        propsData: {
-          removeAction: function() {
-            Engine.removeNode(model)
-          },
-          color: model.data.color,
-          node: model,
-          name: model.data.name,
-          inPorts: model.data.inVariables,
-          outPorts: model.data.outVariables
-        }
-      }
-      // return React.createElement(BasicNodeWidget,{
-      //   removeAction: function(){
-      //     Engine.removeNode(model);
-      //   },
-      //   color: model.data.color,
-      //   node: model,
-      //   name: model.data.name,
-      //   inPorts: model.data.inVariables,
-      //   outPorts: model.data.outVariables
-      // });
-    }
-  });
-
-  Engine.loadModel(model);
-  return Engine
+  return model
 
 
   function generateSet(model,offsetX,offsetY) {
@@ -111,7 +77,7 @@ export default function factory() {
     model.nodes = model.nodes.concat([
     {
         id:node1,
-        type: 'action',
+        type: 'default',
         data: {
           name: "Create User",
           outVariables: ['out']
@@ -121,7 +87,7 @@ export default function factory() {
       },
       {
         id:node2,
-        type: 'action',
+        type: 'default',
         data: {
           name: "Add Card to User",
           inVariables: ['in','in 2'],
@@ -132,7 +98,7 @@ export default function factory() {
       },
       {
         id:node3,
-        type: 'action',
+        type: 'default',
         data: {
           color: 'rgb(0,192,255)',
           name: "Remove User",
@@ -143,7 +109,7 @@ export default function factory() {
       },
       {
         id:node4,
-        type: 'action',
+        type: 'default',
         data: {
           color: 'rgb(0,192,255)',
           name: "Remove User",
@@ -155,7 +121,7 @@ export default function factory() {
       },
       {
         id:node5,
-        type: 'action',
+        type: 'default',
         data: {
           color: 'rgb(192,255,0)',
           name: "Complex Action 2",

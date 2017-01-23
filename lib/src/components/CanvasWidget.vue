@@ -1,12 +1,12 @@
 <script>
 
-  import _ from 'lodash'
+  import { forEach } from 'lodash-es'
 
   import nodeView from './NodeViewWidget.vue'
   import svgWidget from './SVGWidget.vue'
 
-  import setState from 'mixins/setState.js'
-
+  import setState from '../../mixins/setState.js'
+  
   export default {
     name: "CanvasWidget",
     mixins: [setState],
@@ -39,25 +39,34 @@
         },
       }
     },
+    destroyed() {
+      this.engine.removeAllListeners()
+    },
     mounted() {
       this.engine.state.canvas = this.$refs.canvas
-      var listenerID = this.engine.registerListener(event => {
-        if(event.type === 'repaint'){
+      var listenerID = this.engine.registerListener(({ type, data = {} }) => {
+        if (type === 'repaint'){
           // this.forceUpdate()
+        } else if (type === 'add:node') {
+
+        } else if (type === 'remove:node') {
+
+        } else if (type === 'add:link') {
+
+        } else if (type === 'remove:link') {
+
         }
       })
       this.listenerID = listenerID
 
-      setTimeout(() => {
-        //check for any links that dont have points
-        _.forEach(this.engine.state.links, (link) => {
-          if(link.points.length === 0){
-            link.points.push(this.engine.getPortCenter(this.engine.getNode(link.source),link.sourcePort));
-            link.points.push(this.engine.getPortCenter(this.engine.getNode(link.target),link.targetPort));
-            // this.forceUpdate();
-          }
-        })
-      },10)
+      //check for any links that dont have points
+      forEach(this.engine.state.links, (link) => {
+        if(link.points.length === 0){
+          link.points.push(this.engine.getPortCenter(this.engine.getNode(link.source),link.sourcePort));
+          link.points.push(this.engine.getPortCenter(this.engine.getNode(link.target),link.targetPort));
+          // this.forceUpdate();
+        }
+      })
 
 
       //add a keybaord listener
