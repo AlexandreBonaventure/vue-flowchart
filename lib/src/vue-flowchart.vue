@@ -20,7 +20,7 @@
             component: basicNodeWidget,
             propsData: {
               removeAction: function() {
-                Engine.removeNode(model)
+                this.engine.removeNode(model)
               },
               color: model.data.color,
               node: model,
