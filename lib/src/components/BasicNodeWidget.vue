@@ -59,7 +59,7 @@
       <div class="name">
         {{ name }}
       </div>
-      <div class="fa fa-close" @click="removeAction")></div>
+      <div class="fa fa-close" @click="removeAction"></div>
     </div>
     <div class="ports">
       <div class="in">

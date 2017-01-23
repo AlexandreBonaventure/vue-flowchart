@@ -18437,7 +18437,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 // import { map } from 'lodash-es'
 var basicNodeWidget = { render: function render() {
-    var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', { staticClass: "basic-node", style: { backgroundColor: _vm.color } }, [_c('div', { staticClass: "title" }, [_c('div', { staticClass: "name" }, [_vm._v(_vm._s(_vm.name))]), _c('div', { staticClass: "fa fa-close", attrs: { ")": "" }, on: { "click": _vm.removeAction } })]), _c('div', { staticClass: "ports" }, [_c('div', { staticClass: "in" }, [_vm._l(_vm.formattedInPorts, function (port) {
+    var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', { staticClass: "basic-node", style: { backgroundColor: _vm.color } }, [_c('div', { staticClass: "title" }, [_c('div', { staticClass: "name" }, [_vm._v(_vm._s(_vm.name))]), _c('div', { staticClass: "fa fa-close", on: { "click": _vm.removeAction } })]), _c('div', { staticClass: "ports" }, [_c('div', { staticClass: "in" }, [_vm._l(_vm.formattedInPorts, function (port) {
       return _c('div', { key: port, staticClass: "in-port" }, [_c('port-widget', { attrs: { "name": _vm.getName(port), "node": _vm.node } }), _c('div', { staticClass: "name" }, [_vm._v(_vm._s(_vm.getDisplay(port)))])], 1);
     }), _vm._l(_vm.formattedOutPorts, function (port) {
       return _c('div', { key: port, staticClass: "out-port" }, [_c('port-widget', { attrs: { "name": _vm.getName(port), "node": _vm.node } }), _c('div', { staticClass: "name" }, [_vm._v(_vm._s(_vm.getDisplay(port)))])], 1);
