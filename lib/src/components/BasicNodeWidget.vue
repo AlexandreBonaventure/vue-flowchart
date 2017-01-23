@@ -52,21 +52,33 @@
 
 </script>
 
-<template lang="jade">
+<template>
 
-  div.basic-node(:style="{ backgroundColor: color }")
-    .title
-      .name {{ name }}
-      .fa.fa-close(@click="removeAction")
-    .ports
-      .in
-        .in-port(v-for="port in formattedInPorts", :key="port")
-          port-widget(:name='getName(port)', :node='node')
-          .name {{ getDisplay(port) }}
-      .out
-        .out-port(v-for="port in formattedOutPorts", :key="port")
-          port-widget(:name='port', :node='node')
-          .name {{ getDisplay(port) }}
+  <div class="basic-node" :style="{ backgroundColor: color }">
+    <div class="title">
+      <div class="name">
+        {{ name }}
+      </div>
+      <div class="fa fa-close" @click="removeAction")></div>
+    </div>
+    <div class="ports">
+      <div class="in">
+        <div class="in-port" v-for="port in formattedInPorts" :key="port">
+          <port-widget :name='getName(port)' :node='node'></port-widget>
+          <div class="name">
+            {{ getDisplay(port) }}
+          </div>
+        </div>
+        <div class="out-port" v-for="port in formattedOutPorts" :key="port">
+          <port-widget :name='getName(port)' :node='node'></port-widget>
+          <div class="name">
+            {{ getDisplay(port) }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 
 </template>
 

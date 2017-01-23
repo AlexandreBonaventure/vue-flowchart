@@ -32,9 +32,10 @@
 
 </script>
 
-<template lang="jade">
+<template >
 
-  div(:class="classes", :data-nodeid="node.id", :data-name="name", @mouseenter="onMouseEnter", @mouseleave="onMouseLeave")
+  <div :class="classes" :data-nodeid="node.id" :data-name="name" @mouseenter="onMouseEnter" @mouseleave="onMouseLeave">
+  </div>
 
 </template>
 

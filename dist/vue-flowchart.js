@@ -17876,7 +17876,7 @@ if (symIterator$1) {
 // import { map } from 'lodash-es'
 
 var nodeWidget = { render: function render() {
-    var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c("div");
+    var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', { class: _vm.classes, style: _vm.styles, attrs: { "data-nodeid": _vm.node.id }, on: { "mousedown": _vm.onMouseDown } }, [_vm._t("default")], 2);
   }, staticRenderFns: [],
   name: "NodeWidget",
   props: {
@@ -18146,7 +18146,9 @@ var linkWidget = {
 };
 
 var svgWidget = { render: function render() {
-    var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c("div");
+    var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('svg', { staticClass: "storm-flow-canvas", style: _vm.styles }, _vm._l(_vm.engine.state.links, function (link) {
+      return _c('link-widget', { key: link.id, attrs: { "engine": _vm.engine, "link": link, "new-point": _vm.newPoint } });
+    }));
   }, staticRenderFns: [],
   name: "SVGWidget",
   components: {
@@ -18188,7 +18190,7 @@ var setState$1 = {
 };
 
 var canvasWidget = { render: function render() {
-    var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c("div");
+    var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', { ref: "canvas", staticClass: "storm-flow-canvas", on: { "wheel": _vm.onWheel, "mousemove": _vm.onMouseMove, "mousedown": _vm.onMouseDown, "mouseup": _vm.onMouseUp } }, [_c('svg-widget', { attrs: { "engine": _vm.engine, "new-point": _vm.newPoint } }), _c('node-view', { attrs: { "engine": _vm.engine } })], 1);
   }, staticRenderFns: [],
   name: "CanvasWidget",
   mixins: [setState$1],
@@ -18401,7 +18403,7 @@ var canvasWidget = { render: function render() {
 // import { map } from 'lodash-es'
 
 var portWidget = { render: function render() {
-    var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c("div");
+    var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', { class: _vm.classes, attrs: { "data-nodeid": _vm.node.id, "data-name": _vm.name }, on: { "mouseenter": _vm.onMouseEnter, "mouseleave": _vm.onMouseLeave } });
   }, staticRenderFns: [],
   name: "PortWidget",
   props: {
@@ -18435,7 +18437,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 // import { map } from 'lodash-es'
 var basicNodeWidget = { render: function render() {
-    var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c("div");
+    var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', { staticClass: "basic-node", style: { backgroundColor: _vm.color } }, [_c('div', { staticClass: "title" }, [_c('div', { staticClass: "name" }, [_vm._v(_vm._s(_vm.name))]), _c('div', { staticClass: "fa fa-close", attrs: { ")": "" }, on: { "click": _vm.removeAction } })]), _c('div', { staticClass: "ports" }, [_c('div', { staticClass: "in" }, [_vm._l(_vm.formattedInPorts, function (port) {
+      return _c('div', { key: port, staticClass: "in-port" }, [_c('port-widget', { attrs: { "name": _vm.getName(port), "node": _vm.node } }), _c('div', { staticClass: "name" }, [_vm._v(_vm._s(_vm.getDisplay(port)))])], 1);
+    }), _vm._l(_vm.formattedOutPorts, function (port) {
+      return _c('div', { key: port, staticClass: "out-port" }, [_c('port-widget', { attrs: { "name": _vm.getName(port), "node": _vm.node } }), _c('div', { staticClass: "name" }, [_vm._v(_vm._s(_vm.getDisplay(port)))])], 1);
+    })], 2)])]);
   }, staticRenderFns: [],
   name: "BasicNodeWidget",
   components: {
@@ -18466,17 +18472,17 @@ var basicNodeWidget = { render: function render() {
       this.engine.setSelectedNode(this.node);
     },
     getName: function getName(port) {
-      return (typeof port === "undefined" ? "undefined" : _typeof(port)) === 'object' ? port.name : port;
+      return (typeof port === 'undefined' ? 'undefined' : _typeof(port)) === 'object' ? port.name : port;
     },
     getDisplay: function getDisplay(port) {
-      return (typeof port === "undefined" ? "undefined" : _typeof(port)) === 'object' ? port.display : port;
+      return (typeof port === 'undefined' ? 'undefined' : _typeof(port)) === 'object' ? port.display : port;
     }
   },
   computed: {
     styles: function styles() {
       return {
-        top: this.node.y + "px",
-        left: this.node.x + "px"
+        top: this.node.y + 'px',
+        left: this.node.x + 'px'
       };
     },
     classes: function classes() {
@@ -18785,7 +18791,7 @@ var Engine = function () {
 };
 
 var vueFlowchart = { render: function render() {
-    var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c("div");
+    var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', { staticClass: "vue-flowchart" }, [_c('canvas-widget', { attrs: { "engine": _vm.engine } })], 1);
   }, staticRenderFns: [],
   props: {
     data: {
@@ -18803,7 +18809,7 @@ var vueFlowchart = { render: function render() {
           component: basicNodeWidget,
           propsData: {
             removeAction: function removeAction() {
-              Engine.removeNode(model);
+              this.engine.removeNode(model);
             },
             color: model.data.color,
             node: model,

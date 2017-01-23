@@ -37,10 +37,12 @@
 
 </script>
 
-<template lang="jade">
+<template>
 
-  div(:style="styles", :class="classes", :data-nodeid="node.id", @mousedown="onMouseDown")
-    slot
+  <div :style="styles" :class="classes" :data-nodeid="node.id" @mousedown="onMouseDown">
+    <slot></slot>
+  </div>
+  
 
 </template>
 

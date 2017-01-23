@@ -6,7 +6,7 @@
   import svgWidget from './SVGWidget.vue'
 
   import setState from '../../mixins/setState.js'
-  
+
   export default {
     name: "CanvasWidget",
     mixins: [setState],
@@ -226,16 +226,16 @@
 
 </script>
 
-<template lang="jade">
-  div.storm-flow-canvas(
-    ref="canvas",
-    @wheel="onWheel",
-    @mousemove="onMouseMove",
-    @mousedown="onMouseDown",
-    @mouseup="onMouseUp"
-    )
-    svg-widget(:engine="engine", :new-point="newPoint")
-    node-view(:engine="engine")
+<template>
+  <div class="storm-flow-canvas" ref="canvas"
+    @wheel="onWheel"
+    @mousemove="onMouseMove"
+    @mousedown="onMouseDown"
+    @mouseup="onMouseUp">
+    <svg-widget :engine="engine" :new-point="newPoint"></svg-widget>
+    <node-view :engine="engine"></node-view>
+  </div>
+
 
 
 </template>

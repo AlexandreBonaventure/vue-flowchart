@@ -42,10 +42,11 @@
 
 </script>
 
-<template lang="jade">
+<template>
 
-  div.vue-flowchart
-    canvas-widget(:engine="engine")
+  <div class="vue-flowchart">
+    <canvas-widget :engine="engine"></canvas-widget>
+  </div>
 
 </template>
 

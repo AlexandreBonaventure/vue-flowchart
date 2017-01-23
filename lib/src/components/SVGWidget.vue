@@ -34,11 +34,11 @@
 
 </script>
 
-<template lang="jade">
+<template>
 
-  svg.storm-flow-canvas(:style="styles")
-    link-widget(:engine="engine", v-for="link in engine.state.links", :key="link.id", :link="link", :new-point="newPoint")
-
+  <svg class="storm-flow-canvas" :style="styles">
+    <link-widget :engine="engine" v-for="link in engine.state.links" :key="link.id" :link="link" :new-point="newPoint"></link-widget>
+  </svg>
 
 </template>
 
