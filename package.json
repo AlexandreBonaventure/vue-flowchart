@@ -5,7 +5,7 @@
   "main": "dist/vue-flowchart.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rollup -c --name vue-flowchart --input index.js --output dist/vue-flowchart.js --format umd",
+    "build": "rollup -c --name vueFlowchart --input index.js --output dist/vue-flowchart.js --format umd",
     "serve": "NODE_PATH=$NODE_PATH:lib:examples/simple budo examples/simple/index.js --open -d . --live -- -t [ vueify ] -t babelify",
     "//dist": "NODE_PATH=$NODE_PATH:examples/simple browserify -e examples/simple/index.js -o dist/index.js -t vueify -t [ babelify ] -t uglifyify -p [ minifyify --no-map ]"
   },
