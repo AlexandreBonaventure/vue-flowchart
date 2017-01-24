@@ -1,8 +1,8 @@
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('vue')) :
-	typeof define === 'function' && define.amd ? define(['vue'], factory) :
-	(global.vueFlowchart = factory(global.Vue));
-}(this, (function (Vue) { 'use strict';
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('vue')) :
+	typeof define === 'function' && define.amd ? define(['exports', 'vue'], factory) :
+	(factory((global.vueFlowchart = global.vueFlowchart || {}),global.Vue));
+}(this, (function (exports,Vue) { 'use strict';
 
 Vue = 'default' in Vue ? Vue['default'] : Vue;
 
@@ -17952,7 +17952,8 @@ var nodeView = {
     }, map(this.engine.state.nodes, function (node) {
       var model = _this.engine.getNodeFactory(node.type).generateModel(node, _this.engine);
       return h(nodeWidget, {
-        props: { key: node.id, node: node, engine: _this.engine }
+        key: node.id,
+        props: { node: node, engine: _this.engine }
       }, [h(model.component, { props: model.propsData })]);
     }));
   }
@@ -18224,32 +18225,20 @@ var canvasWidget = { render: function render() {
       }
     };
   },
-  destroyed: function destroyed() {
-    this.engine.removeAllListeners();
-  },
   mounted: function mounted() {
     var _this = this;
 
     this.engine.state.canvas = this.$refs.canvas;
-    var listenerID = this.engine.registerListener(function (_ref) {
-      var type = _ref.type,
-          _ref$data = _ref.data,
-          data = _ref$data === undefined ? {} : _ref$data;
-
-      if (type === 'repaint') {
-        // this.forceUpdate()
-      } else if (type === 'add:node') {} else if (type === 'remove:node') {} else if (type === 'add:link') {} else if (type === 'remove:link') {}
-    });
-    this.listenerID = listenerID;
 
     //check for any links that dont have points
-    forEach(this.engine.state.links, function (link) {
-      if (link.points.length === 0) {
-        link.points.push(_this.engine.getPortCenter(_this.engine.getNode(link.source), link.sourcePort));
-        link.points.push(_this.engine.getPortCenter(_this.engine.getNode(link.target), link.targetPort));
-        // this.forceUpdate();
-      }
-    });
+    // forEach(this.engine.state.links, (link) => {
+    //   if(link.points.length === 0){
+    //     link.points.push(this.engine.getPortCenter(this.engine.getNode(link.source),link.sourcePort));
+    //     link.points.push(this.engine.getPortCenter(this.engine.getNode(link.target),link.targetPort));
+    //     // this.forceUpdate();
+    //   }
+    // })
+
 
     //add a keybaord listener
     this.windowListener = window.addEventListener('keydown', function (event) {
@@ -18280,7 +18269,7 @@ var canvasWidget = { render: function render() {
 
       //move the point
       else if (this.selectedPointID) {
-          var point = _.find(this.selectedLink.points, { id: this.selectedPointID });
+          var point = find(this.selectedLink.points, { id: this.selectedPointID });
           var rel = this.engine.getRelativeMousePoint(event);
           point.x = rel.x;
           point.y = rel.y;
@@ -18497,7 +18486,7 @@ var basicNodeWidget = { render: function render() {
   }
 };
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+var _extends$1 = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _typeof$1 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
@@ -18612,7 +18601,7 @@ var Engine = function () {
 
 		loadModel: function loadModel(model) {
 			this.state.links = {};
-			this.state.node = {};
+			this.state.nodes = {};
 
 			model.nodes.forEach(function (node) {
 				this.addNode(node);
@@ -18622,6 +18611,18 @@ var Engine = function () {
 				this.addLink(link);
 			}.bind(this));
 		},
+
+		generateLinkPoints: function generateLinkPoints() {
+			var _this3 = this;
+
+			forEach(this.state.links, function (link) {
+				if (link.points.length === 0) {
+					link.points.push(_this3.getPortCenter(_this3.getNode(link.source), link.sourcePort));
+					link.points.push(_this3.getPortCenter(_this3.getNode(link.target), link.targetPort));
+				}
+			});
+		},
+
 
 		updateNode: function updateNode(node) {
 
@@ -18707,23 +18708,31 @@ var Engine = function () {
 		},
 
 		setSelectedNode: function setSelectedNode(node) {
-			this.state.selectedLink = null;
+			// this.state.selectedLink = null;
 			this.state.selectedNode = node;
-			this.state.updatingNodes = null;
-			this.state.updatingLinks = null;
+			this.fireEvent({
+				type: 'node:select',
+				data: node
+			});
+			// this.state.updatingNodes =  null;
+			// this.state.updatingLinks = null;
 			this.update();
 		},
 
 		setSelectedLink: function setSelectedLink(link) {
-			this.state.selectedNode = null;
+			// this.state.selectedNode = null;
 			this.state.selectedLink = link;
-			this.state.updatingNodes = null;
-			this.state.updatingLinks = null;
+			this.fireEvent({
+				type: 'link:select',
+				data: link
+			});
+			// this.state.updatingNodes = null;
+			// this.state.updatingLinks = null;
 			this.update();
 		},
 
 		addLink: function addLink(link) {
-			var FinalLink = link = _extends({
+			var FinalLink = link = _extends$1({
 				id: this.UID(),
 				source: null,
 				sourcePort: null,
@@ -18790,44 +18799,111 @@ var Engine = function () {
 	};
 };
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+var DEFAULT_TEMPLATE = ['default', basicNodeWidget, {}];
+
 var vueFlowchart = { render: function render() {
     var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', { staticClass: "vue-flowchart" }, [_c('canvas-widget', { attrs: { "engine": _vm.engine } })], 1);
   }, staticRenderFns: [],
   props: {
     data: {
       required: true
+    },
+    nodeTemplates: {
+      default: function _default() {
+        return [DEFAULT_TEMPLATE];
+      }
     }
   },
   components: {
     canvasWidget: canvasWidget
   },
   created: function created() {
-    this.engine.registerNodeFactory({
-      type: 'default',
-      generateModel: function generateModel(model) {
-        var _this = this;
+    var _this = this;
 
-        return {
-          component: basicNodeWidget,
-          propsData: {
-            removeAction: function removeAction() {
-              _this.engine.removeNode(model);
-            },
-            color: model.data.color,
-            node: model,
-            name: model.data.name,
-            inPorts: model.data.inVariables,
-            outPorts: model.data.outVariables
-          }
-        };
-      }
+    [DEFAULT_TEMPLATE].concat(_toConsumableArray(this.nodeTemplates)).forEach(function (_ref) {
+      var _ref2 = _slicedToArray(_ref, 3),
+          type = _ref2[0],
+          component = _ref2[1],
+          _ref2$ = _ref2[2],
+          opts = _ref2$ === undefined ? {} : _ref2$;
+
+      _this.engine.registerNodeFactory({
+        type: type,
+        generateModel: function generateModel(model) {
+          var _this2 = this;
+
+          return {
+            component: component,
+            propsData: _extends({
+              removeAction: function removeAction() {
+                _this2.engine.removeNode(model);
+              },
+              // color: model.data.color,
+              node: model
+            }, model.data, opts)
+          };
+        }
+      });
     });
-    this.engine.loadModel(this.data);
+
+    this.initializeModel();
+  },
+
+  watch: {
+    // data: {
+    //   deep: true,
+    //   handler() {
+    //     this.initializeModel()
+    //   }
+    // }
   },
   data: function data() {
     return {
       engine: Engine()
     };
+  },
+
+  methods: {
+    initializeModel: function initializeModel() {
+      var _this3 = this;
+
+      this.engine.loadModel(this.data);
+      this.$nextTick(function () {
+        _this3.engine.generateLinkPoints();
+      });
+    }
+  },
+  destroyed: function destroyed() {
+    this.engine.removeListener(this._listenerID);
+  },
+  mounted: function mounted() {
+    var _this4 = this;
+
+    var listenerID = this.engine.registerListener(function (_ref3) {
+      var type = _ref3.type,
+          _ref3$data = _ref3.data,
+          data = _ref3$data === undefined ? {} : _ref3$data;
+
+      // if (type === 'repaint'){
+      //
+      // } else if (type === 'add:node') {
+      //
+      // } else if (type === 'remove:node') {
+      //
+      // } else if (type === 'add:link') {
+      //
+      // } else if (type === 'remove:link') {
+      //
+      // }
+      _this4.$emit(type, data);
+    });
+    this._listenerID = listenerID;
   }
 };
 
@@ -18835,6 +18911,9 @@ var vueFlowchart = { render: function render() {
 
 // export Engine from './lib/Engine.js'
 
-return vueFlowchart;
+exports['default'] = vueFlowchart;
+exports.portWidget = portWidget;
+
+Object.defineProperty(exports, '__esModule', { value: true });
 
 })));
