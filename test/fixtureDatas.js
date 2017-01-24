@@ -40,14 +40,14 @@ export default function factory() {
       {
         id: Engine.UID(),
         source: node1,
-        sourcePort: 'out',
+        sourcePort: 'inout',
         target: node2,
         targetPort: 'in',
       },
       {
         id: Engine.UID(),
         source: node1,
-        sourcePort: 'out',
+        sourcePort: 'inout',
         target: node3,
         targetPort: 'in'
       },
@@ -77,10 +77,10 @@ export default function factory() {
     model.nodes = model.nodes.concat([
     {
         id:node1,
-        type: 'default',
+        type: 'custom',
         data: {
-          name: "Create User",
-          outVariables: ['out']
+          name: "I'm custom",
+          inOutVariables: ['inout']
         },
         x: Math.random(50) * 10 + offsetX,
         y: Math.random(50) * 10 + offsetY
@@ -90,8 +90,8 @@ export default function factory() {
         type: 'default',
         data: {
           name: "Add Card to User",
-          inVariables: ['in','in 2'],
-          outVariables: ['out']
+          inPorts: ['in','in 2'],
+          outPorts: ['out']
         },
         x:250 +offsetX,
         y:50 + offsetY
@@ -102,7 +102,7 @@ export default function factory() {
         data: {
           color: 'rgb(0,192,255)',
           name: "Remove User",
-          inVariables: ['in']
+          inPorts: ['in']
         },
         x:250 + offsetX,
         y:150 + offsetY
@@ -113,8 +113,8 @@ export default function factory() {
         data: {
           color: 'rgb(0,192,255)',
           name: "Remove User",
-          inVariables: ['in'],
-          outVariables: ['out']
+          inPorts: ['in'],
+          outPorts: ['out']
         },
         x:500 + offsetX,
         y:150 + offsetY
@@ -125,7 +125,7 @@ export default function factory() {
         data: {
           color: 'rgb(192,255,0)',
           name: "Complex Action 2",
-          inVariables: ['in','in2','in3']
+          inPorts: ['in','in2','in3']
         },
         x:800 + offsetX,
         y:100 + offsetY

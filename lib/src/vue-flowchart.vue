@@ -3,43 +3,55 @@
   import basicNodeWidget from './components/BasicNodeWidget.vue'
   import Engine from './Engine.js'
 
+  const DEFAULT_TEMPLATE = ['default', basicNodeWidget, {}]
+
   export default {
     props: {
       data: {
         required: true,
+      },
+      nodeTemplates: {
+        default: () => [
+           DEFAULT_TEMPLATE
+        ]
       },
     },
     components: {
       canvasWidget,
     },
     created() {
-      this.engine.registerNodeFactory({
-        type:'default',
-        generateModel(model) {
-          return {
-            component: basicNodeWidget,
-            propsData: {
-              removeAction: () => {
-                this.engine.removeNode(model)
-              },
-              color: model.data.color,
-              node: model,
-              name: model.data.name,
-              inPorts: model.data.inVariables,
-              outPorts: model.data.outVariables
+      [DEFAULT_TEMPLATE, ...this.nodeTemplates].forEach(([ type, component, opts = {}]) => {
+        this.engine.registerNodeFactory({
+          type,
+          generateModel(model) {
+            return {
+              component,
+              propsData: {
+                removeAction: () => {
+                  this.engine.removeNode(model)
+                },
+                // color: model.data.color,
+                node: model,
+                // name: model.data.name,
+                // inPorts: model.data.inVariables,
+                // outPorts: model.data.outVariables,
+                ...model.data,
+                ...opts,
+              }
             }
           }
-        }
-      });
+        })
+      })
+
       this.initializeModel()
     },
     watch: {
-      data: {
-        deep: true,
-        handler() {
-          this.initializeModel()
-        }
-      }
+      // data: {
+      //   deep: true,
+      //   handler() {
+      //     this.initializeModel()
+      //   }
+      // }
     },
     data() {
       return {

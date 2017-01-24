@@ -1,7 +1,7 @@
 <script>
-  import vueFlowchart from '../../../lib/src/vue-flowchart.vue'
+  import vueFlowchart from '../../../index.js'
   import fixtureDatas from '../../../test/fixtureDatas.js'
-
+  import customWidget from './custom/CustomWidget.vue'
   export default {
     components: {
       vueFlowchart,
@@ -9,12 +9,15 @@
     data() {
       return {
         data: fixtureDatas(),
+        templates: [
+          ['custom', customWidget],
+        ]
       }
     },
     mounted() {
-      setInterval(() => {
-        this.data = fixtureDatas()
-      }, 5000)
+      // setInterval(() => {
+      //   this.data = fixtureDatas()
+      // }, 5000)
     },
     methods: {
       log(...args) {
@@ -29,11 +32,13 @@
 
 vue-flowchart(
   :data="data",
-  @link:add="log",
-  @link:remove="log",
-  @node:add="log",
-  @node:remove="log",
+  :node-templates="templates",
+  @link:add="log('new link', $arguments)",
+  @link:remove="log('deleted link', $arguments)",
+  @node:add="log('new node', $arguments)",
+  @node:remove="log('deleted node', $arguments)",
 )
+  //- customWidget(slot="custom")
 
 </template>
 
