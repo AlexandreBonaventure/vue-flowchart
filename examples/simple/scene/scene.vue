@@ -10,6 +10,11 @@
       return {
         data: fixtureDatas(),
       }
+    },
+    mounted() {
+      setInterval(() => {
+        this.data = fixtureDatas()
+      }, 5000)
     }
   }
 

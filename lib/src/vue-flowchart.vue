@@ -31,11 +31,27 @@
           }
         }
       });
-      this.engine.loadModel(this.data)
+      this.initializeModel()
+    },
+    watch: {
+      data: {
+        deep: true,
+        handler() {
+          this.initializeModel()
+        }
+      }
     },
     data() {
       return {
         engine: Engine(),
+      }
+    },
+    methods: {
+      initializeModel() {
+        this.engine.loadModel(this.data)
+        this.$nextTick(() => {
+          this.engine.generateLinkPoints()
+        })
       }
     }
   }

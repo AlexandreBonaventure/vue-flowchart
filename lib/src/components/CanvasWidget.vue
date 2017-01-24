@@ -60,13 +60,13 @@
       this.listenerID = listenerID
 
       //check for any links that dont have points
-      forEach(this.engine.state.links, (link) => {
-        if(link.points.length === 0){
-          link.points.push(this.engine.getPortCenter(this.engine.getNode(link.source),link.sourcePort));
-          link.points.push(this.engine.getPortCenter(this.engine.getNode(link.target),link.targetPort));
-          // this.forceUpdate();
-        }
-      })
+      // forEach(this.engine.state.links, (link) => {
+      //   if(link.points.length === 0){
+      //     link.points.push(this.engine.getPortCenter(this.engine.getNode(link.source),link.sourcePort));
+      //     link.points.push(this.engine.getPortCenter(this.engine.getNode(link.target),link.targetPort));
+      //     // this.forceUpdate();
+      //   }
+      // })
 
 
       //add a keybaord listener

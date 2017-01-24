@@ -82,8 +82,8 @@ export default function factory() {
           name: "Create User",
           outVariables: ['out']
         },
-        x:50 + offsetX,
-        y:50 + offsetY
+        x: Math.random(50) * 10 + offsetX,
+        y: Math.random(50) * 10 + offsetY
       },
       {
         id:node2,

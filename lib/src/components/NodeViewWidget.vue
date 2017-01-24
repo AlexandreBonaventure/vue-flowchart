@@ -47,7 +47,8 @@
   				return h(
   					nodeWidget,
             {
-              props: { key: node.id, node, engine: this.engine },
+              key: node.id,
+              props: { node, engine: this.engine },
             },
   					[
               h(
