@@ -193,6 +193,10 @@
               }
             }
           }
+          this.engine.fireEvent({
+            type:'link:update',
+            data: this.selectedLink,
+          })
         }
 
         this.setState({
