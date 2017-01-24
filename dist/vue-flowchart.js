@@ -18009,7 +18009,7 @@ var linkWidget = {
           cy: this.getPoint(pointIndex).y,
           r: 5
         }
-      }), ('circle', {
+      }), h('circle', {
         class: 'point',
         attrs: {
           'data-linkid': this.link.id,
@@ -18373,6 +18373,10 @@ var canvasWidget = { render: function render() {
               }
             }
         }
+        this.engine.fireEvent({
+          type: 'link:update',
+          data: this.selectedLink
+        });
       }
 
       this.setState({
