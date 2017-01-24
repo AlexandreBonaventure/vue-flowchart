@@ -13,6 +13,7 @@
 			node: {},
 			inPorts: { default: () => [] },
 			outPorts: { default: () => [] },
+			port: { default: () => 'default' },
 			color: { default: 'rgb(50,50,50)' },
 			removeAction: { default: () => (() => { console.log("remove node")}) },
 		},
@@ -42,7 +43,11 @@
         return 'node'+ (this.engine.state.selectedNode && this.engine.state.selectedNode.id == this.node.id ? ' selected' : '')
       },
       formattedInPorts() {
-        return Array.isArray(this.inPorts) ? this.inPorts : [this.inPorts]
+        if (!this.inPorts.length && !this.outPorts.length) {
+          return [this.port]
+        } else {
+          return Array.isArray(this.inPorts) ? this.inPorts : [this.inPorts]
+        }
       },
       formattedOutPorts() {
         return Array.isArray(this.outPorts) ? this.outPorts : [this.outPorts]

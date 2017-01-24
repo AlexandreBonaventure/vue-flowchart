@@ -18445,6 +18445,9 @@ var basicNodeWidget = { render: function render() {
     outPorts: { default: function _default() {
         return [];
       } },
+    port: { default: function _default() {
+        return 'default';
+      } },
     color: { default: 'rgb(50,50,50)' },
     removeAction: { default: function _default() {
         return function () {
@@ -18478,7 +18481,11 @@ var basicNodeWidget = { render: function render() {
       return 'node' + (this.engine.state.selectedNode && this.engine.state.selectedNode.id == this.node.id ? ' selected' : '');
     },
     formattedInPorts: function formattedInPorts() {
-      return Array.isArray(this.inPorts) ? this.inPorts : [this.inPorts];
+      if (!this.inPorts.length && !this.outPorts.length) {
+        return [this.port];
+      } else {
+        return Array.isArray(this.inPorts) ? this.inPorts : [this.inPorts];
+      }
     },
     formattedOutPorts: function formattedOutPorts() {
       return Array.isArray(this.outPorts) ? this.outPorts : [this.outPorts];

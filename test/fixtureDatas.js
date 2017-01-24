@@ -63,14 +63,14 @@ export default function factory() {
         source: node4,
         sourcePort: 'out',
         target: node5,
-        targetPort: 'in2'
+        targetPort: 'default'
       },
       {
         id: Engine.UID(),
         source: node2,
         sourcePort: 'out',
         target: node5,
-        targetPort: 'in'
+        targetPort: 'default'
       }
     ]);
 
@@ -125,7 +125,7 @@ export default function factory() {
         data: {
           color: 'rgb(192,255,0)',
           name: "Complex Action 2",
-          inPorts: ['in','in2','in3']
+          // port: ['in','in2','in3']
         },
         x:800 + offsetX,
         y:100 + offsetY
