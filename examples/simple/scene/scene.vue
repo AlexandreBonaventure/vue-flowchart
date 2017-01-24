@@ -33,8 +33,10 @@
 vue-flowchart(
   :data="data",
   :node-templates="templates",
+  @link:select="log('selected link', $arguments)",
   @link:add="log('new link', $arguments)",
   @link:remove="log('deleted link', $arguments)",
+  @node:select="log('selected node', $arguments)",
   @node:add="log('new node', $arguments)",
   @node:remove="log('deleted node', $arguments)",
 )
