@@ -11,7 +11,13 @@
         data: fixtureDatas(),
         templates: [
           ['custom', customWidget],
-        ]
+        ],
+        options: {
+          onEdgeRemove() {
+            const confirm = window.confirm('Are you sure ?')
+            return Promise.resolve(confirm)
+          }
+        },
       }
     },
     mounted() {
@@ -33,6 +39,7 @@
 vue-flowchart(
   :data="data",
   :node-templates="templates",
+  :options="options",
   @link:select="log('selected link', $arguments)",
   @link:add="log('new link', $arguments)",
   @link:remove="log('deleted link', $arguments)",

@@ -5028,7 +5028,7 @@ function getAllKeysIn(object) {
 var DataView = getNative(root, 'DataView');
 
 /* Built-in method references that are verified to be native. */
-var Promise = getNative(root, 'Promise');
+var Promise$1 = getNative(root, 'Promise');
 
 /* Built-in method references that are verified to be native. */
 var Set = getNative(root, 'Set');
@@ -5045,7 +5045,7 @@ var dataViewTag$2 = '[object DataView]';
 /** Used to detect maps, sets, and weakmaps. */
 var dataViewCtorString = toSource(DataView);
 var mapCtorString = toSource(Map);
-var promiseCtorString = toSource(Promise);
+var promiseCtorString = toSource(Promise$1);
 var setCtorString = toSource(Set);
 var weakMapCtorString = toSource(WeakMap);
 
@@ -5061,7 +5061,7 @@ var getTag = baseGetTag;
 // Fallback for data views, maps, sets, and weak maps in IE 11 and promises in Node.js < 6.
 if ((DataView && getTag(new DataView(new ArrayBuffer(1))) != dataViewTag$2) ||
     (Map && getTag(new Map) != mapTag$2) ||
-    (Promise && getTag(Promise.resolve()) != promiseTag) ||
+    (Promise$1 && getTag(Promise$1.resolve()) != promiseTag) ||
     (Set && getTag(new Set) != setTag$2) ||
     (WeakMap && getTag(new WeakMap) != weakMapTag$2)) {
   getTag = function(value) {
@@ -18519,7 +18519,8 @@ var Engine = function () {
 			selectedNode: null,
 
 			updatingNodes: null,
-			updatingLinks: null
+			updatingLinks: null,
+			validators: {}
 		},
 
 		repaintLinks: function repaintLinks(links) {
@@ -18682,29 +18683,38 @@ var Engine = function () {
 		},
 
 		removeLink: function removeLink(link) {
-			Vue.delete(this.state.links, link.id);
-			this.update();
-			this.fireEvent({
-				type: 'link:remove',
-				data: link
+			var _this4 = this;
+
+			this.state.validators.onEdgeRemove().then(function (valid) {
+				if (valid) {
+					Vue.delete(_this4.state.links, link.id);
+					_this4.update();
+					_this4.fireEvent({
+						type: 'link:remove',
+						data: link
+					});
+				}
 			});
 		},
 
 		removeNode: function removeNode(node) {
+			var _this5 = this;
+
 			//remove the links
 			var links = this.getNodeLinks(node);
 			links.forEach(function (link) {
-				this.removeLink(link);
-			}.bind(this));
+				_this5.removeLink(link);
+			});
 
 			//remove the node
 			Vue.delete(this.state.nodes, node.id);
-			this.update();
+			// this.update()
 			this.fireEvent({
 				type: 'node:remove',
 				data: node
 			});
 		},
+
 
 		getPortCenter: function getPortCenter(node, port) {
 			var sourceElement = this.getNodePortElement(node, port);
@@ -18806,6 +18816,10 @@ var Engine = function () {
 				}
 			});
 			this.state.factories[FinalModel.type] = FinalModel;
+		},
+
+		registerValidators: function registerValidators(validators) {
+			this.state.validators = validators;
 		}
 	};
 };
@@ -18817,6 +18831,14 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 var DEFAULT_TEMPLATE = ['default', basicNodeWidget, {}];
+var DEFAULTS_OPTS = {
+  onNodeRemove: function onNodeRemove(node) {
+    return Promise.resolve(true);
+  },
+  onEdgeRemove: function onEdgeRemove(node) {
+    return Promise.resolve(true);
+  }
+};
 
 var vueFlowchart = { render: function render() {
     var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', { staticClass: "vue-flowchart" }, [_c('canvas-widget', { attrs: { "engine": _vm.engine } })], 1);
@@ -18828,6 +18850,11 @@ var vueFlowchart = { render: function render() {
     nodeTemplates: {
       default: function _default() {
         return [DEFAULT_TEMPLATE];
+      }
+    },
+    options: {
+      default: function _default() {
+        return DEFAULTS_OPTS;
       }
     }
   },
@@ -18862,7 +18889,11 @@ var vueFlowchart = { render: function render() {
         }
       });
     });
+    var _options = this.options,
+        onNodeRemove = _options.onNodeRemove,
+        onEdgeRemove = _options.onEdgeRemove;
 
+    this.engine.registerValidators({ onNodeRemove: onNodeRemove, onEdgeRemove: onEdgeRemove });
     this.initializeModel();
   },
 

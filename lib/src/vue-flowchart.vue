@@ -4,6 +4,11 @@
   import Engine from './Engine.js'
 
   const DEFAULT_TEMPLATE = ['default', basicNodeWidget, {}]
+  const DEFAULTS_OPTS = {
+    onNodeRemove(node) { return Promise.resolve(true) },
+    onEdgeRemove(node) { return Promise.resolve(true) },
+  }
+
 
   export default {
     props: {
@@ -15,12 +20,15 @@
            DEFAULT_TEMPLATE
         ]
       },
+      options: {
+        default: () => DEFAULTS_OPTS
+      },
     },
     components: {
       canvasWidget,
     },
     created() {
-      [DEFAULT_TEMPLATE, ...this.nodeTemplates].forEach(([ type, component, opts = {}]) => {
+      ([DEFAULT_TEMPLATE, ...this.nodeTemplates]).forEach(([ type, component, opts = {}]) => {
         this.engine.registerNodeFactory({
           type,
           generateModel(model) {
@@ -42,7 +50,8 @@
           }
         })
       })
-
+      const { onNodeRemove, onEdgeRemove } = this.options
+      this.engine.registerValidators({ onNodeRemove, onEdgeRemove })
       this.initializeModel()
     },
     watch: {
