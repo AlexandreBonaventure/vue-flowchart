@@ -53,7 +53,27 @@
           this.engine.generateLinkPoints()
         })
       }
-    }
+    },
+    destroyed() {
+      this.engine.removeListener(this._listenerID)
+    },
+    mounted() {
+      var listenerID = this.engine.registerListener(({ type, data = {} }) => {
+        // if (type === 'repaint'){
+        //
+        // } else if (type === 'add:node') {
+        //
+        // } else if (type === 'remove:node') {
+        //
+        // } else if (type === 'add:link') {
+        //
+        // } else if (type === 'remove:link') {
+        //
+        // }
+        this.$emit(type, data)
+      })
+      this._listenerID = listenerID
+    },
   }
 
 </script>

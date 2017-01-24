@@ -15,14 +15,25 @@
       setInterval(() => {
         this.data = fixtureDatas()
       }, 5000)
-    }
+    },
+    methods: {
+      log(...args) {
+        console.log(...args);
+      }
+    },
   }
 
 </script>
 
 <template lang="jade">
 
-vue-flowchart(:data="data")
+vue-flowchart(
+  :data="data",
+  @link:add="log",
+  @link:remove="log",
+  @node:add="log",
+  @node:remove="log",
+)
 
 </template>
 

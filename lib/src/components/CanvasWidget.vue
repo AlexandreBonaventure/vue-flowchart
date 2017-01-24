@@ -1,6 +1,6 @@
 <script>
 
-  import { forEach } from 'lodash-es'
+  import { forEach, find } from 'lodash-es'
 
   import nodeView from './NodeViewWidget.vue'
   import svgWidget from './SVGWidget.vue'
@@ -39,25 +39,10 @@
         },
       }
     },
-    destroyed() {
-      this.engine.removeAllListeners()
-    },
+
     mounted() {
       this.engine.state.canvas = this.$refs.canvas
-      var listenerID = this.engine.registerListener(({ type, data = {} }) => {
-        if (type === 'repaint'){
-          // this.forceUpdate()
-        } else if (type === 'add:node') {
 
-        } else if (type === 'remove:node') {
-
-        } else if (type === 'add:link') {
-
-        } else if (type === 'remove:link') {
-
-        }
-      })
-      this.listenerID = listenerID
 
       //check for any links that dont have points
       // forEach(this.engine.state.links, (link) => {
@@ -97,7 +82,7 @@
 
         //move the point
         else if(this.selectedPointID){
-          var point = _.find(this.selectedLink.points,{id:this.selectedPointID});
+          var point = find(this.selectedLink.points,{id:this.selectedPointID});
           var rel = this.engine.getRelativeMousePoint(event);
           point.x = rel.x;
           point.y = rel.y;

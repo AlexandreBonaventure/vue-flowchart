@@ -1,7 +1,7 @@
 # vue-flowchart
-
+This lib is under heavy development. It is not production-ready and API could change dramatically. Feel free to use it anyway.
 # Usage
-
+Soon
 
 ### Graph Data
 ```
