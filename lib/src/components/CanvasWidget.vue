@@ -67,6 +67,18 @@
       window.focus()
     },
     methods: {
+      resetState() {
+        this.setState({
+          selectedLink: null,
+          selectedPort: null,
+          selectedPointID: null,
+          selectedModel: null,
+          initialX: null,
+          initialY: null,
+          initialObjectX: null,
+          initialObjectY: null
+        })
+      },
       onWheel(event) {
         this.engine.setZoom(this.engine.state.zoom+(event.deltaY/60))
         this.engine.repaintNodes([])
@@ -127,15 +139,21 @@
         //look for a point
         element = event.target.closest('.point[data-id]');
         if(element){
-
+          const id = element.getAttribute('data-id')
           //chrome fix o_O
           if(element.dataset === undefined){
             element.dataset = {
-              id:element.getAttribute('data-id'),
+              id,
               linkid: element.getAttribute('data-linkid')
             };
           }
-
+          const point = this.engine.getPoint(id)
+          this.setState({
+            initialX: event.pageX,
+            initialY: event.pageY,
+            initialObjectX: point.x,
+            initialObjectY: point.y,
+          })
           this.selectedPointID = element.dataset.id
           this.selectedLink = this.engine.getLink(element.dataset.linkid)
           return
@@ -165,8 +183,11 @@
         });
       },
       onMouseUp(event){
+        if(!this.selectedPointID) this.resetState()
         if(this.selectedPointID){
+          const point = this.engine.getPoint(this.selectedPointID)
           var element = event.target.closest('.port[data-name]');
+          if(!element) this.resetState()
           if(element){
             var nodeElement = event.target.closest('.node[data-nodeid]');
 
@@ -182,33 +203,37 @@
               var NodeFactory = this.engine.getNodeFactory(nodeObject.type);
 
               //check if the port is allowed by using the factory
-              if(NodeFactory.isPortAllowed(
+              const isPortAllowed = NodeFactory.isPortAllowed(
                 this.engine.getNode(this.selectedLink.source),
                 this.selectedLink.sourcePort,
-                nodeObject,element.dataset.name)){
+                nodeObject,element.dataset.name)
 
-                this.selectedLink.target = nodeElement.dataset.nodeid;
-                this.selectedLink.targetPort = element.dataset.name;
-                this.engine.repaintNodes([nodeObject]);
+              if (!isPortAllowed) this.resetState()
+              if (isPortAllowed) {
+
+                this.engine.state.validators.onEdgeUpdate(this.selectedLink)
+                  .then((valid) => {
+                    if (valid) {
+                      this.selectedLink.target = nodeElement.dataset.nodeid;
+                      this.selectedLink.targetPort = element.dataset.name;
+                      this.engine.repaintNodes([nodeObject]);
+
+                      this.engine.fireEvent({
+                        type:'link:update',
+                        data: this.selectedLink,
+                      })
+                    } else {
+                      //revert position
+                      point.x = this.initialObjectX || point.x + 100
+                      point.y = this.initialObjectY || point.y + 100
+                      console.log(point);
+                    }
+                    this.resetState()
+                  })
               }
             }
           }
-          this.engine.fireEvent({
-            type:'link:update',
-            data: this.selectedLink,
-          })
         }
-
-        this.setState({
-          selectedLink: null,
-          selectedPort: null,
-          selectedPointID: null,
-          selectedModel: null,
-          initialX: null,
-          initialY: null,
-          initialObjectX: null,
-          initialObjectY: null
-        });
       },
     },
   }

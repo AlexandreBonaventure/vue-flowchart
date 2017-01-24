@@ -18254,6 +18254,18 @@ var canvasWidget = { render: function render() {
   },
 
   methods: {
+    resetState: function resetState() {
+      this.setState({
+        selectedLink: null,
+        selectedPort: null,
+        selectedPointID: null,
+        selectedModel: null,
+        initialX: null,
+        initialY: null,
+        initialObjectX: null,
+        initialObjectY: null
+      });
+    },
     onWheel: function onWheel(event) {
       this.engine.setZoom(this.engine.state.zoom + event.deltaY / 60);
       this.engine.repaintNodes([]);
@@ -18310,15 +18322,21 @@ var canvasWidget = { render: function render() {
       //look for a point
       element = event.target.closest('.point[data-id]');
       if (element) {
-
+        var _id = element.getAttribute('data-id');
         //chrome fix o_O
         if (element.dataset === undefined) {
           element.dataset = {
-            id: element.getAttribute('data-id'),
+            id: _id,
             linkid: element.getAttribute('data-linkid')
           };
         }
-
+        var point = this.engine.getPoint(_id);
+        this.setState({
+          initialX: event.pageX,
+          initialY: event.pageY,
+          initialObjectX: point.x,
+          initialObjectY: point.y
+        });
         this.selectedPointID = element.dataset.id;
         this.selectedLink = this.engine.getLink(element.dataset.linkid);
         return;
@@ -18348,47 +18366,64 @@ var canvasWidget = { render: function render() {
       });
     },
     onMouseUp: function onMouseUp(event) {
+      var _this2 = this;
+
+      if (!this.selectedPointID) this.resetState();
       if (this.selectedPointID) {
-        var element = event.target.closest('.port[data-name]');
-        if (element) {
-          var nodeElement = event.target.closest('.node[data-nodeid]');
+        var element;
+        var nodeElement;
+        var nodeObject;
+        var NodeFactory;
 
-          //cant add link to self
-          if (this.selectedLink.source === nodeElement.dataset.nodeid) {
-            this.engine.removeLink(this.selectedLink);
-          }
+        (function () {
+          var point = _this2.engine.getPoint(_this2.selectedPointID);
+          element = event.target.closest('.port[data-name]');
 
-          //do the merge
-          else {
+          if (!element) _this2.resetState();
+          if (element) {
+            nodeElement = event.target.closest('.node[data-nodeid]');
 
-              var nodeObject = this.engine.getNode(nodeElement.dataset.nodeid);
-              var NodeFactory = this.engine.getNodeFactory(nodeObject.type);
+            //cant add link to self
 
-              //check if the port is allowed by using the factory
-              if (NodeFactory.isPortAllowed(this.engine.getNode(this.selectedLink.source), this.selectedLink.sourcePort, nodeObject, element.dataset.name)) {
-
-                this.selectedLink.target = nodeElement.dataset.nodeid;
-                this.selectedLink.targetPort = element.dataset.name;
-                this.engine.repaintNodes([nodeObject]);
-              }
+            if (_this2.selectedLink.source === nodeElement.dataset.nodeid) {
+              _this2.engine.removeLink(_this2.selectedLink);
             }
-        }
-        this.engine.fireEvent({
-          type: 'link:update',
-          data: this.selectedLink
-        });
-      }
 
-      this.setState({
-        selectedLink: null,
-        selectedPort: null,
-        selectedPointID: null,
-        selectedModel: null,
-        initialX: null,
-        initialY: null,
-        initialObjectX: null,
-        initialObjectY: null
-      });
+            //do the merge
+            else {
+                nodeObject = _this2.engine.getNode(nodeElement.dataset.nodeid);
+                NodeFactory = _this2.engine.getNodeFactory(nodeObject.type);
+
+                //check if the port is allowed by using the factory
+
+                var isPortAllowed = NodeFactory.isPortAllowed(_this2.engine.getNode(_this2.selectedLink.source), _this2.selectedLink.sourcePort, nodeObject, element.dataset.name);
+
+                if (!isPortAllowed) _this2.resetState();
+                if (isPortAllowed) {
+
+                  _this2.engine.state.validators.onEdgeUpdate(_this2.selectedLink).then(function (valid) {
+                    if (valid) {
+                      _this2.selectedLink.target = nodeElement.dataset.nodeid;
+                      _this2.selectedLink.targetPort = element.dataset.name;
+                      _this2.engine.repaintNodes([nodeObject]);
+
+                      _this2.engine.fireEvent({
+                        type: 'link:update',
+                        data: _this2.selectedLink
+                      });
+                    } else {
+                      //revert position
+                      point.x = _this2.initialObjectX || point.x + 100;
+                      point.y = _this2.initialObjectY || point.y + 100;
+                      console.log(point);
+                    }
+                    _this2.resetState();
+                  });
+                }
+              }
+          }
+        })();
+      }
     }
   }
 };
@@ -18504,6 +18539,11 @@ var _typeof$1 = typeof Symbol === "function" && typeof Symbol.iterator === "symb
 /**
  * @author Dylan Vorster
  */
+
+var validatorNoop$1 = function validatorNoop$1(node) {
+	return Promise.resolve(true);
+};
+
 var Engine = function () {
 	return {
 		state: {
@@ -18520,7 +18560,11 @@ var Engine = function () {
 
 			updatingNodes: null,
 			updatingLinks: null,
-			validators: {}
+			validators: {
+				onNodeRemove: validatorNoop$1,
+				onEdgeRemove: validatorNoop$1,
+				onEdgeUpdate: validatorNoop$1
+			}
 		},
 
 		repaintLinks: function repaintLinks(links) {
@@ -18685,7 +18729,11 @@ var Engine = function () {
 		removeLink: function removeLink(link) {
 			var _this4 = this;
 
-			this.state.validators.onEdgeRemove().then(function (valid) {
+			var bypassValidation = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+			if ((typeof link === 'undefined' ? 'undefined' : _typeof$1(link)) !== 'object') link = this.getLink(link);
+			var validator$ = bypassValidation ? validatorNoop$1() : this.state.validators.onEdgeRemove(link);
+			validator$.then(function (valid) {
 				if (valid) {
 					Vue.delete(_this4.state.links, link.id);
 					_this4.update();
@@ -18696,22 +18744,29 @@ var Engine = function () {
 				}
 			});
 		},
-
 		removeNode: function removeNode(node) {
 			var _this5 = this;
 
-			//remove the links
-			var links = this.getNodeLinks(node);
-			links.forEach(function (link) {
-				_this5.removeLink(link);
-			});
+			var bypassValidation = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
-			//remove the node
-			Vue.delete(this.state.nodes, node.id);
-			// this.update()
-			this.fireEvent({
-				type: 'node:remove',
-				data: node
+			if ((typeof node === 'undefined' ? 'undefined' : _typeof$1(node)) !== 'object') node = this.getNode(node);
+			var validator$ = bypassValidation ? validatorNoop$1() : this.state.validators.onNodeRemove(node);
+			validator$.then(function (valid) {
+				if (valid) {
+					//remove the links
+					var links = _this5.getNodeLinks(node);
+					links.forEach(function (link) {
+						_this5.removeLink(link, true);
+					});
+
+					//remove the node
+					Vue.delete(_this5.state.nodes, node.id);
+					// this.update()
+					_this5.fireEvent({
+						type: 'node:remove',
+						data: node
+					});
+				}
 			});
 		},
 
@@ -18794,6 +18849,16 @@ var Engine = function () {
 			return this.state.links[id];
 		},
 
+		getPoint: function getPoint(id) {
+			var allPoints = flatMap(this.state.links, function (_ref) {
+				var points = _ref.points;
+				return points;
+			});
+			var point = find(allPoints, { id: id });
+			console.log(point);
+			return point;
+		},
+
 		getNode: function getNode(id) {
 			return this.state.nodes[id];
 		},
@@ -18819,7 +18884,7 @@ var Engine = function () {
 		},
 
 		registerValidators: function registerValidators(validators) {
-			this.state.validators = validators;
+			this.state.validators = defaults(validators, this.state.validators);
 		}
 	};
 };
@@ -18831,13 +18896,15 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 var DEFAULT_TEMPLATE = ['default', basicNodeWidget, {}];
+
+var validatorNoop = function validatorNoop(node) {
+  return Promise.resolve(true);
+};
+
 var DEFAULTS_OPTS = {
-  onNodeRemove: function onNodeRemove(node) {
-    return Promise.resolve(true);
-  },
-  onEdgeRemove: function onEdgeRemove(node) {
-    return Promise.resolve(true);
-  }
+  onNodeRemove: validatorNoop,
+  onEdgeRemove: validatorNoop,
+  onEdgeUpdate: validatorNoop
 };
 
 var vueFlowchart = { render: function render() {
@@ -18871,16 +18938,15 @@ var vueFlowchart = { render: function render() {
           _ref2$ = _ref2[2],
           opts = _ref2$ === undefined ? {} : _ref2$;
 
+      var engine = _this.engine;
       _this.engine.registerNodeFactory({
         type: type,
         generateModel: function generateModel(model) {
-          var _this2 = this;
-
           return {
             component: component,
             propsData: _extends({
               removeAction: function removeAction() {
-                _this2.engine.removeNode(model);
+                engine.removeNode(model);
               },
               // color: model.data.color,
               node: model
@@ -18891,9 +18957,10 @@ var vueFlowchart = { render: function render() {
     });
     var _options = this.options,
         onNodeRemove = _options.onNodeRemove,
-        onEdgeRemove = _options.onEdgeRemove;
+        onEdgeRemove = _options.onEdgeRemove,
+        onEdgeUpdate = _options.onEdgeUpdate;
 
-    this.engine.registerValidators({ onNodeRemove: onNodeRemove, onEdgeRemove: onEdgeRemove });
+    this.engine.registerValidators({ onNodeRemove: onNodeRemove, onEdgeRemove: onEdgeRemove, onEdgeUpdate: onEdgeUpdate });
     this.initializeModel();
   },
 
@@ -18913,19 +18980,35 @@ var vueFlowchart = { render: function render() {
 
   methods: {
     initializeModel: function initializeModel() {
-      var _this3 = this;
+      var _this2 = this;
 
       this.engine.loadModel(this.data);
       this.$nextTick(function () {
-        _this3.engine.generateLinkPoints();
+        _this2.engine.generateLinkPoints();
       });
+    },
+    addNode: function addNode(node) {
+      this.engine.addNode(node);
+    },
+    removeNode: function removeNode(id) {
+      var bypassValidation = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+      this.engine.removeNode(id, bypassValidation);
+    },
+    addLink: function addLink(link) {
+      var bypassValidation = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+      this.engine.addLink(link, bypassValidation);
+    },
+    removeLink: function removeLink(id) {
+      this.engine.removeLink(id);
     }
   },
   destroyed: function destroyed() {
     this.engine.removeListener(this._listenerID);
   },
   mounted: function mounted() {
-    var _this4 = this;
+    var _this3 = this;
 
     var listenerID = this.engine.registerListener(function (_ref3) {
       var type = _ref3.type,
@@ -18943,7 +19026,7 @@ var vueFlowchart = { render: function render() {
       // } else if (type === 'remove:link') {
       //
       // }
-      _this4.$emit(type, data);
+      _this3.$emit(type, data);
     });
     this._listenerID = listenerID;
   }

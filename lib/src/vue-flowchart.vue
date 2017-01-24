@@ -4,9 +4,13 @@
   import Engine from './Engine.js'
 
   const DEFAULT_TEMPLATE = ['default', basicNodeWidget, {}]
+
+  const validatorNoop = (node) => { return Promise.resolve(true) }
+
   const DEFAULTS_OPTS = {
-    onNodeRemove(node) { return Promise.resolve(true) },
-    onEdgeRemove(node) { return Promise.resolve(true) },
+    onNodeRemove: validatorNoop,
+    onEdgeRemove: validatorNoop,
+    onEdgeUpdate: validatorNoop,
   }
 
 
@@ -29,6 +33,7 @@
     },
     created() {
       ([DEFAULT_TEMPLATE, ...this.nodeTemplates]).forEach(([ type, component, opts = {}]) => {
+        const engine = this.engine
         this.engine.registerNodeFactory({
           type,
           generateModel(model) {
@@ -36,7 +41,7 @@
               component,
               propsData: {
                 removeAction: () => {
-                  this.engine.removeNode(model)
+                  engine.removeNode(model)
                 },
                 // color: model.data.color,
                 node: model,
@@ -50,8 +55,8 @@
           }
         })
       })
-      const { onNodeRemove, onEdgeRemove } = this.options
-      this.engine.registerValidators({ onNodeRemove, onEdgeRemove })
+      const { onNodeRemove, onEdgeRemove, onEdgeUpdate } = this.options
+      this.engine.registerValidators({ onNodeRemove, onEdgeRemove, onEdgeUpdate })
       this.initializeModel()
     },
     watch: {
@@ -73,7 +78,19 @@
         this.$nextTick(() => {
           this.engine.generateLinkPoints()
         })
-      }
+      },
+      addNode(node) {
+        this.engine.addNode(node)
+      },
+      removeNode(id, bypassValidation = false) {
+        this.engine.removeNode(id, bypassValidation)
+      },
+      addLink(link, bypassValidation = false) {
+        this.engine.addLink(link, bypassValidation)
+      },
+      removeLink(id) {
+        this.engine.removeLink(id)
+      },
     },
     destroyed() {
       this.engine.removeListener(this._listenerID)
