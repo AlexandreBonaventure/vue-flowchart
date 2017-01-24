@@ -57,7 +57,7 @@
                 },
         			}
             ),
-      			(
+      			h(
               'circle',
               {
         				class: 'point',
