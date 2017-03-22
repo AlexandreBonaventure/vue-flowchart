@@ -42,10 +42,10 @@
   <div :style="styles" :class="classes" :data-nodeid="node.id" @mousedown="onMouseDown">
     <slot></slot>
   </div>
-  
+
 
 </template>
 
-<style lang="css">
+<style lang="scss">
 
 </style>

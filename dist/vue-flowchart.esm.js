@@ -1,10 +1,4 @@
-(function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('vue')) :
-	typeof define === 'function' && define.amd ? define(['exports', 'vue'], factory) :
-	(factory((global.vueFlowchart = global.vueFlowchart || {}),global.Vue));
-}(this, (function (exports,Vue) { 'use strict';
-
-Vue = 'default' in Vue ? Vue['default'] : Vue;
+import Vue from 'vue';
 
 /** Detect free variable `global` from Node.js. */
 var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
@@ -19036,9 +19030,4 @@ var vueFlowchart = { render: function render() {
 
 // export Engine from './lib/Engine.js'
 
-exports['default'] = vueFlowchart;
-exports.portWidget = portWidget;
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-})));
+export { portWidget };export default vueFlowchart;

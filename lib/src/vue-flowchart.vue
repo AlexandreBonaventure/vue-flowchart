@@ -124,7 +124,7 @@
 
 </template>
 
-<style lang="css">
+<style lang="scss">
 
 .vue-flowchart {
   width: 100%;

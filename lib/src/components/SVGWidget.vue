@@ -42,7 +42,7 @@
 
 </template>
 
-<style lang="css">
+<style lang="scss">
   .iframe {
     pointer-events: none;
     background-color: grey;

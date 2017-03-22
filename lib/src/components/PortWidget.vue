@@ -39,6 +39,6 @@
 
 </template>
 
-<style lang="css">
+<style lang="scss">
 
 </style>
