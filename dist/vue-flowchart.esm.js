@@ -10,7 +10,7 @@ var freeSelf = typeof self == 'object' && self && self.Object === Object && self
 var root = freeGlobal || freeSelf || Function('return this')();
 
 /** Built-in value references. */
-var Symbol$1 = root.Symbol;
+var Symbol = root.Symbol;
 
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
@@ -26,7 +26,7 @@ var hasOwnProperty = objectProto.hasOwnProperty;
 var nativeObjectToString = objectProto.toString;
 
 /** Built-in value references. */
-var symToStringTag$1 = Symbol$1 ? Symbol$1.toStringTag : undefined;
+var symToStringTag$1 = Symbol ? Symbol.toStringTag : undefined;
 
 /**
  * A specialized version of `baseGetTag` which ignores `Symbol.toStringTag` values.
@@ -81,7 +81,7 @@ var nullTag = '[object Null]';
 var undefinedTag = '[object Undefined]';
 
 /** Built-in value references. */
-var symToStringTag = Symbol$1 ? Symbol$1.toStringTag : undefined;
+var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
 
 /**
  * The base implementation of `getTag` without fallbacks for buggy environments.
@@ -222,7 +222,7 @@ var isArray = Array.isArray;
 var INFINITY = 1 / 0;
 
 /** Used to convert symbols to primitives and strings. */
-var symbolProto = Symbol$1 ? Symbol$1.prototype : undefined;
+var symbolProto = Symbol ? Symbol.prototype : undefined;
 var symbolToString = symbolProto ? symbolProto.toString : undefined;
 
 /**
@@ -1683,12 +1683,14 @@ function createHybrid(func, bitmask, thisArg, partials, holders, partialsRight, 
       Ctor = isBindKey ? undefined : createCtor(func);
 
   function wrapper() {
+    var arguments$1 = arguments;
+
     var length = arguments.length,
         args = Array(length),
         index = length;
 
     while (index--) {
-      args[index] = arguments[index];
+      args[index] = arguments$1[index];
     }
     if (isCurried) {
       var placeholder = getHolder(wrapper),
@@ -1741,13 +1743,15 @@ function createCurry(func, bitmask, arity) {
   var Ctor = createCtor(func);
 
   function wrapper() {
+    var arguments$1 = arguments;
+
     var length = arguments.length,
         args = Array(length),
         index = length,
         placeholder = getHolder(wrapper);
 
     while (index--) {
-      args[index] = arguments[index];
+      args[index] = arguments$1[index];
     }
     var holders = (length < 3 && args[0] !== placeholder && args[length - 1] !== placeholder)
       ? []
@@ -1785,6 +1789,8 @@ function createPartial(func, bitmask, thisArg, partials) {
       Ctor = createCtor(func);
 
   function wrapper() {
+    var arguments$1 = arguments;
+
     var argsIndex = -1,
         argsLength = arguments.length,
         leftIndex = -1,
@@ -1796,7 +1802,7 @@ function createPartial(func, bitmask, thisArg, partials) {
       args[leftIndex] = partials[leftIndex];
     }
     while (argsLength--) {
-      args[leftIndex++] = arguments[++argsIndex];
+      args[leftIndex++] = arguments$1[++argsIndex];
     }
     return apply(fn, isBind ? thisArg : this, args);
   }
@@ -3004,13 +3010,15 @@ function hashSet(key, value) {
  * @param {Array} [entries] The key-value pairs to cache.
  */
 function Hash(entries) {
+  var this$1 = this;
+
   var index = -1,
       length = entries == null ? 0 : entries.length;
 
   this.clear();
   while (++index < length) {
     var entry = entries[index];
-    this.set(entry[0], entry[1]);
+    this$1.set(entry[0], entry[1]);
   }
 }
 
@@ -3143,13 +3151,15 @@ function listCacheSet(key, value) {
  * @param {Array} [entries] The key-value pairs to cache.
  */
 function ListCache(entries) {
+  var this$1 = this;
+
   var index = -1,
       length = entries == null ? 0 : entries.length;
 
   this.clear();
   while (++index < length) {
     var entry = entries[index];
-    this.set(entry[0], entry[1]);
+    this$1.set(entry[0], entry[1]);
   }
 }
 
@@ -3276,13 +3286,15 @@ function mapCacheSet(key, value) {
  * @param {Array} [entries] The key-value pairs to cache.
  */
 function MapCache(entries) {
+  var this$1 = this;
+
   var index = -1,
       length = entries == null ? 0 : entries.length;
 
   this.clear();
   while (++index < length) {
     var entry = entries[index];
-    this.set(entry[0], entry[1]);
+    this$1.set(entry[0], entry[1]);
   }
 }
 
@@ -3559,7 +3571,7 @@ function arrayPush(array, values) {
 }
 
 /** Built-in value references. */
-var spreadableSymbol = Symbol$1 ? Symbol$1.isConcatSpreadable : undefined;
+var spreadableSymbol = Symbol ? Symbol.isConcatSpreadable : undefined;
 
 /**
  * Checks if `value` is a flattenable `arguments` object or array.
@@ -5245,7 +5257,7 @@ function cloneSet(set, isDeep, cloneFunc) {
 }
 
 /** Used to convert symbols to primitives and strings. */
-var symbolProto$1 = Symbol$1 ? Symbol$1.prototype : undefined;
+var symbolProto$1 = Symbol ? Symbol.prototype : undefined;
 var symbolValueOf = symbolProto$1 ? symbolProto$1.valueOf : undefined;
 
 /**
@@ -5706,6 +5718,8 @@ function compact(array) {
  * // => [1]
  */
 function concat() {
+  var arguments$1 = arguments;
+
   var length = arguments.length;
   if (!length) {
     return [];
@@ -5715,7 +5729,7 @@ function concat() {
       index = length;
 
   while (index--) {
-    args[index - 1] = arguments[index];
+    args[index - 1] = arguments$1[index];
   }
   return arrayPush(isArray(array) ? copyArray(array) : [array], baseFlatten(args, 1));
 }
@@ -5760,12 +5774,14 @@ function setCacheHas(value) {
  * @param {Array} [values] The values to cache.
  */
 function SetCache(values) {
+  var this$1 = this;
+
   var index = -1,
       length = values == null ? 0 : values.length;
 
   this.__data__ = new MapCache;
   while (++index < length) {
-    this.add(values[index]);
+    this$1.add(values[index]);
   }
 }
 
@@ -5904,7 +5920,7 @@ var arrayBufferTag$3 = '[object ArrayBuffer]';
 var dataViewTag$4 = '[object DataView]';
 
 /** Used to convert symbols to primitives and strings. */
-var symbolProto$2 = Symbol$1 ? Symbol$1.prototype : undefined;
+var symbolProto$2 = Symbol ? Symbol.prototype : undefined;
 var symbolValueOf$1 = symbolProto$2 ? symbolProto$2.valueOf : undefined;
 
 /**
@@ -6515,11 +6531,13 @@ function cond(pairs) {
   });
 
   return baseRest(function(args) {
+    var this$1 = this;
+
     var index = -1;
     while (++index < length) {
       var pair = pairs[index];
-      if (apply(pair[0], this, args)) {
-        return apply(pair[1], this, args);
+      if (apply(pair[0], this$1, args)) {
+        return apply(pair[1], this$1, args);
       }
     }
   });
@@ -9154,6 +9172,8 @@ function createFlow(fromRight) {
       }
     }
     return function() {
+      var this$1 = this;
+
       var args = arguments,
           value = args[0];
 
@@ -9164,7 +9184,7 @@ function createFlow(fromRight) {
           result = length ? funcs[index].apply(this, args) : value;
 
       while (++index < length) {
-        result = funcs[index].call(this, result);
+        result = funcs[index].call(this$1, result);
       }
       return result;
     };
@@ -11851,7 +11871,7 @@ var mapTag$8 = '[object Map]';
 var setTag$8 = '[object Set]';
 
 /** Built-in value references. */
-var symIterator = Symbol$1 ? Symbol$1.iterator : undefined;
+var symIterator = Symbol ? Symbol.iterator : undefined;
 
 /**
  * Converts `value` to an array.
@@ -12467,11 +12487,13 @@ var overArgs = castRest(function(func, transforms) {
 
   var funcsLength = transforms.length;
   return baseRest(function(args) {
+    var this$1 = this;
+
     var index = -1,
         length = nativeMin$8(args.length, funcsLength);
 
     while (++index < length) {
-      args[index] = transforms[index].call(this, args[index]);
+      args[index] = transforms[index].call(this$1, args[index]);
     }
     return apply(func, this, args);
   });
@@ -16553,7 +16575,7 @@ function baseUpdate(object, path, updater, customizer) {
  * console.log(object.x[0].y.z);
  * // => 0
  */
-function update$1(object, path, updater) {
+function update(object, path, updater) {
   return object == null ? object : baseUpdate(object, path, castFunction(updater));
 }
 
@@ -17018,104 +17040,104 @@ var zipWith = baseRest(function(arrays) {
 });
 
 var array = {
-  chunk, compact, concat, difference, differenceBy,
-  differenceWith, drop, dropRight, dropRightWhile, dropWhile,
-  fill, findIndex, findLastIndex, first: head, flatten,
-  flattenDeep, flattenDepth, fromPairs, head, indexOf,
-  initial, intersection, intersectionBy, intersectionWith, join,
-  last, lastIndexOf, nth, pull, pullAll,
-  pullAllBy, pullAllWith, pullAt, remove, reverse,
-  slice, sortedIndex, sortedIndexBy, sortedIndexOf, sortedLastIndex,
-  sortedLastIndexBy, sortedLastIndexOf, sortedUniq, sortedUniqBy, tail,
-  take, takeRight, takeRightWhile, takeWhile, union,
-  unionBy, unionWith, uniq, uniqBy, uniqWith,
-  unzip, unzipWith, without, xor, xorBy,
-  xorWith, zip, zipObject, zipObjectDeep, zipWith
+  chunk: chunk, compact: compact, concat: concat, difference: difference, differenceBy: differenceBy,
+  differenceWith: differenceWith, drop: drop, dropRight: dropRight, dropRightWhile: dropRightWhile, dropWhile: dropWhile,
+  fill: fill, findIndex: findIndex, findLastIndex: findLastIndex, first: head, flatten: flatten,
+  flattenDeep: flattenDeep, flattenDepth: flattenDepth, fromPairs: fromPairs, head: head, indexOf: indexOf,
+  initial: initial, intersection: intersection, intersectionBy: intersectionBy, intersectionWith: intersectionWith, join: join,
+  last: last, lastIndexOf: lastIndexOf, nth: nth, pull: pull, pullAll: pullAll,
+  pullAllBy: pullAllBy, pullAllWith: pullAllWith, pullAt: pullAt, remove: remove, reverse: reverse,
+  slice: slice, sortedIndex: sortedIndex, sortedIndexBy: sortedIndexBy, sortedIndexOf: sortedIndexOf, sortedLastIndex: sortedLastIndex,
+  sortedLastIndexBy: sortedLastIndexBy, sortedLastIndexOf: sortedLastIndexOf, sortedUniq: sortedUniq, sortedUniqBy: sortedUniqBy, tail: tail,
+  take: take, takeRight: takeRight, takeRightWhile: takeRightWhile, takeWhile: takeWhile, union: union,
+  unionBy: unionBy, unionWith: unionWith, uniq: uniq, uniqBy: uniqBy, uniqWith: uniqWith,
+  unzip: unzip, unzipWith: unzipWith, without: without, xor: xor, xorBy: xorBy,
+  xorWith: xorWith, zip: zip, zipObject: zipObject, zipObjectDeep: zipObjectDeep, zipWith: zipWith
 };
 
 var collection = {
-  countBy, each: forEach, eachRight: forEachRight, every, filter,
-  find, findLast, flatMap, flatMapDeep, flatMapDepth,
-  forEach, forEachRight, groupBy, includes, invokeMap,
-  keyBy, map, orderBy, partition, reduce,
-  reduceRight, reject, sample, sampleSize, shuffle,
-  size, some, sortBy
+  countBy: countBy, each: forEach, eachRight: forEachRight, every: every, filter: filter,
+  find: find, findLast: findLast, flatMap: flatMap, flatMapDeep: flatMapDeep, flatMapDepth: flatMapDepth,
+  forEach: forEach, forEachRight: forEachRight, groupBy: groupBy, includes: includes, invokeMap: invokeMap,
+  keyBy: keyBy, map: map, orderBy: orderBy, partition: partition, reduce: reduce,
+  reduceRight: reduceRight, reject: reject, sample: sample, sampleSize: sampleSize, shuffle: shuffle,
+  size: size, some: some, sortBy: sortBy
 };
 
 var date = {
-  now
+  now: now
 };
 
 var func = {
-  after, ary, before, bind, bindKey,
-  curry, curryRight, debounce, defer, delay,
-  flip, memoize, negate, once, overArgs,
-  partial, partialRight, rearg, rest, spread,
-  throttle, unary, wrap
+  after: after, ary: ary, before: before, bind: bind, bindKey: bindKey,
+  curry: curry, curryRight: curryRight, debounce: debounce, defer: defer, delay: delay,
+  flip: flip, memoize: memoize, negate: negate, once: once, overArgs: overArgs,
+  partial: partial, partialRight: partialRight, rearg: rearg, rest: rest, spread: spread,
+  throttle: throttle, unary: unary, wrap: wrap
 };
 
 var lang = {
-  castArray, clone, cloneDeep, cloneDeepWith, cloneWith,
-  conformsTo, eq, gt, gte, isArguments,
-  isArray, isArrayBuffer, isArrayLike, isArrayLikeObject, isBoolean,
-  isBuffer, isDate, isElement, isEmpty, isEqual,
-  isEqualWith, isError, isFinite, isFunction, isInteger,
-  isLength, isMap, isMatch, isMatchWith, isNaN,
-  isNative, isNil, isNull, isNumber, isObject,
-  isObjectLike, isPlainObject, isRegExp, isSafeInteger, isSet,
-  isString, isSymbol, isTypedArray, isUndefined, isWeakMap,
-  isWeakSet, lt, lte, toArray, toFinite,
-  toInteger, toLength, toNumber, toPlainObject, toSafeInteger,
-  toString
+  castArray: castArray, clone: clone, cloneDeep: cloneDeep, cloneDeepWith: cloneDeepWith, cloneWith: cloneWith,
+  conformsTo: conformsTo, eq: eq, gt: gt, gte: gte, isArguments: isArguments,
+  isArray: isArray, isArrayBuffer: isArrayBuffer, isArrayLike: isArrayLike, isArrayLikeObject: isArrayLikeObject, isBoolean: isBoolean,
+  isBuffer: isBuffer, isDate: isDate, isElement: isElement, isEmpty: isEmpty, isEqual: isEqual,
+  isEqualWith: isEqualWith, isError: isError, isFinite: isFinite, isFunction: isFunction, isInteger: isInteger,
+  isLength: isLength, isMap: isMap, isMatch: isMatch, isMatchWith: isMatchWith, isNaN: isNaN,
+  isNative: isNative, isNil: isNil, isNull: isNull, isNumber: isNumber, isObject: isObject,
+  isObjectLike: isObjectLike, isPlainObject: isPlainObject, isRegExp: isRegExp, isSafeInteger: isSafeInteger, isSet: isSet,
+  isString: isString, isSymbol: isSymbol, isTypedArray: isTypedArray, isUndefined: isUndefined, isWeakMap: isWeakMap,
+  isWeakSet: isWeakSet, lt: lt, lte: lte, toArray: toArray, toFinite: toFinite,
+  toInteger: toInteger, toLength: toLength, toNumber: toNumber, toPlainObject: toPlainObject, toSafeInteger: toSafeInteger,
+  toString: toString
 };
 
 var math = {
-  add, ceil, divide, floor, max,
-  maxBy, mean, meanBy, min, minBy,
-  multiply, round, subtract, sum, sumBy
+  add: add, ceil: ceil, divide: divide, floor: floor, max: max,
+  maxBy: maxBy, mean: mean, meanBy: meanBy, min: min, minBy: minBy,
+  multiply: multiply, round: round, subtract: subtract, sum: sum, sumBy: sumBy
 };
 
 var number = {
-  clamp, inRange, random
+  clamp: clamp, inRange: inRange, random: random
 };
 
 var object = {
-  assign, assignIn, assignInWith, assignWith, at,
-  create, defaults, defaultsDeep, entries: toPairs, entriesIn: toPairsIn,
-  extend: assignIn, extendWith: assignInWith, findKey, findLastKey, forIn,
-  forInRight, forOwn, forOwnRight, functions, functionsIn,
-  get, has, hasIn, invert, invertBy,
-  invoke, keys, keysIn: keysIn$1, mapKeys, mapValues,
-  merge, mergeWith, omit, omitBy, pick,
-  pickBy, result, set, setWith, toPairs,
-  toPairsIn, transform, unset, update: update$1, updateWith,
-  values, valuesIn
+  assign: assign, assignIn: assignIn, assignInWith: assignInWith, assignWith: assignWith, at: at,
+  create: create, defaults: defaults, defaultsDeep: defaultsDeep, entries: toPairs, entriesIn: toPairsIn,
+  extend: assignIn, extendWith: assignInWith, findKey: findKey, findLastKey: findLastKey, forIn: forIn,
+  forInRight: forInRight, forOwn: forOwn, forOwnRight: forOwnRight, functions: functions, functionsIn: functionsIn,
+  get: get, has: has, hasIn: hasIn, invert: invert, invertBy: invertBy,
+  invoke: invoke, keys: keys, keysIn: keysIn$1, mapKeys: mapKeys, mapValues: mapValues,
+  merge: merge, mergeWith: mergeWith, omit: omit, omitBy: omitBy, pick: pick,
+  pickBy: pickBy, result: result, set: set, setWith: setWith, toPairs: toPairs,
+  toPairsIn: toPairsIn, transform: transform, unset: unset, update: update, updateWith: updateWith,
+  values: values, valuesIn: valuesIn
 };
 
 var seq = {
-  at: wrapperAt, chain, commit: wrapperCommit, lodash, next: wrapperNext,
-  plant: wrapperPlant, reverse: wrapperReverse, tap, thru, toIterator: wrapperToIterator,
-  toJSON: wrapperValue, value: wrapperValue, valueOf: wrapperValue, wrapperChain
+  at: wrapperAt, chain: chain, commit: wrapperCommit, lodash: lodash, next: wrapperNext,
+  plant: wrapperPlant, reverse: wrapperReverse, tap: tap, thru: thru, toIterator: wrapperToIterator,
+  toJSON: wrapperValue, value: wrapperValue, valueOf: wrapperValue, wrapperChain: wrapperChain
 };
 
 var string = {
-  camelCase, capitalize, deburr, endsWith, escape,
-  escapeRegExp, kebabCase, lowerCase, lowerFirst, pad,
-  padEnd, padStart, parseInt: parseInt$1, repeat, replace,
-  snakeCase, split, startCase, startsWith, template,
-  templateSettings, toLower, toUpper, trim, trimEnd,
-  trimStart, truncate, unescape, upperCase, upperFirst,
-  words
+  camelCase: camelCase, capitalize: capitalize, deburr: deburr, endsWith: endsWith, escape: escape,
+  escapeRegExp: escapeRegExp, kebabCase: kebabCase, lowerCase: lowerCase, lowerFirst: lowerFirst, pad: pad,
+  padEnd: padEnd, padStart: padStart, parseInt: parseInt$1, repeat: repeat, replace: replace,
+  snakeCase: snakeCase, split: split, startCase: startCase, startsWith: startsWith, template: template,
+  templateSettings: templateSettings, toLower: toLower, toUpper: toUpper, trim: trim, trimEnd: trimEnd,
+  trimStart: trimStart, truncate: truncate, unescape: unescape, upperCase: upperCase, upperFirst: upperFirst,
+  words: words
 };
 
 var util = {
-  attempt, bindAll, cond, conforms, constant,
-  defaultTo, flow, flowRight, identity, iteratee,
-  matches, matchesProperty, method, methodOf, mixin,
-  noop, nthArg, over, overEvery, overSome,
-  property, propertyOf, range, rangeRight, stubArray,
-  stubFalse, stubObject, stubString, stubTrue, times,
-  toPath, uniqueId
+  attempt: attempt, bindAll: bindAll, cond: cond, conforms: conforms, constant: constant,
+  defaultTo: defaultTo, flow: flow, flowRight: flowRight, identity: identity, iteratee: iteratee,
+  matches: matches, matchesProperty: matchesProperty, method: method, methodOf: methodOf, mixin: mixin,
+  noop: noop, nthArg: nthArg, over: over, overEvery: overEvery, overSome: overSome,
+  property: property, propertyOf: propertyOf, range: range, rangeRight: rangeRight, stubArray: stubArray,
+  stubFalse: stubFalse, stubObject: stubObject, stubString: stubString, stubTrue: stubTrue, times: times,
+  toPath: toPath, uniqueId: uniqueId
 };
 
 /**
@@ -17283,7 +17305,7 @@ var objectProto$25 = Object.prototype;
 var hasOwnProperty$22 = objectProto$25.hasOwnProperty;
 
 /** Built-in value references. */
-var symIterator$1 = Symbol$1 ? Symbol$1.iterator : undefined;
+var symIterator$1 = Symbol ? Symbol.iterator : undefined;
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 var nativeMax$15 = Math.max;
@@ -17869,413 +17891,433 @@ if (symIterator$1) {
 
 // import { map } from 'lodash-es'
 
-var nodeWidget = { render: function render() {
-    var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', { class: _vm.classes, style: _vm.styles, attrs: { "data-nodeid": _vm.node.id }, on: { "mousedown": _vm.onMouseDown } }, [_vm._t("default")], 2);
-  }, staticRenderFns: [],
-  name: "NodeWidget",
-  props: {
-    engine: {
-      required: true
-    },
-    node: {
-      required: true
-    }
-  },
-  data: function data() {
-    return {
-      mouseDown: false
-    };
-  },
-
-  methods: {
-    onMouseDown: function onMouseDown() {
-      this.engine.setSelectedNode(this.node);
-    }
-  },
-  computed: {
-    styles: function styles() {
+  var nodeWidget = {render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{class:_vm.classes,style:(_vm.styles),attrs:{"data-nodeid":_vm.node.id},on:{"mousedown":_vm.onMouseDown}},[_vm._t("default")],2)},staticRenderFns: [],
+    name: "NodeWidget",
+    props: {
+			engine: {
+        required: true,
+      },
+			node: {
+        required: true,
+      },
+		},
+    data: function data() {
       return {
-        top: this.node.y + "px",
-        left: this.node.x + "px"
-      };
+        mouseDown: false,
+      }
     },
-    classes: function classes() {
-      return 'node' + (this.engine.state.selectedNode && this.engine.state.selectedNode.id == this.node.id ? ' selected' : '');
-    }
-  }
-};
+    methods: {
+      onMouseDown: function onMouseDown(){
+        this.engine.setSelectedNode(this.node);
+      }
+    },
+    computed: {
+      styles: function styles() {
+        return {
+          top: ((this.node.y) + "px"),
+          left: ((this.node.x) + "px"),
+        }
+      },
+      classes: function classes() {
+        return 'node'+ (this.engine.state.selectedNode && this.engine.state.selectedNode.id == this.node.id ? ' selected' : '')
+      },
+    },
+  };
 
 var nodeView = {
-  name: "NodeViewWidget",
-  components: {
-    nodeWidget: nodeWidget
-  },
-  props: {
-    engine: {
-      required: true
-    }
-  },
-  data: function data() {
-    return {
-      models: []
-    };
-  },
-  created: function created() {
-    // this.generateModels(this.engine.state.nodes)
-  },
-
-  computed: {
-    styles: function styles() {
+    name: "NodeViewWidget",
+    components: {
+      nodeWidget: nodeWidget,
+    },
+    props: {
+			engine: {
+        required: true,
+      },
+		},
+    data: function data() {
       return {
-        transform: 'scale(' + this.engine.state.zoom / 100.0 + ') translate(' + this.engine.state.offsetX + 'px, ' + this.engine.state.offsetY + 'px)',
-        width: '100%',
-        height: '100%'
-      };
-    }
-  },
-  render: function render(h) {
-    var _this = this;
-
-    return h('div', {
-      class: 'node-view',
-      style: {
-        transform: 'scale(' + this.engine.state.zoom / 100.0 + ') translate(' + this.engine.state.offsetX + 'px,' + this.engine.state.offsetY + 'px)',
-        width: '100%',
-        height: '100%'
+        models: [],
       }
-    }, map(this.engine.state.nodes, function (node) {
-      var model = _this.engine.getNodeFactory(node.type).generateModel(node, _this.engine);
-      return h(nodeWidget, {
-        key: node.id,
-        props: { node: node, engine: _this.engine }
-      }, [h(model.component, { props: model.propsData })]);
-    }));
-  }
-};
+    },
+    created: function created() {
+      // this.generateModels(this.engine.state.nodes)
+    },
+    computed: {
+      styles: function styles() {
+        return {
+          transform: ("scale(" + (this.engine.state.zoom/100.0) + ") translate(" + (this.engine.state.offsetX) + "px, " + (this.engine.state.offsetY) + "px)"),
+          width: '100%',
+          height: '100%',
+        }
+      },
+    },
+    render: function render(h) {
+  		var this$1 = this;
+
+
+  		return h(
+        'div',
+        {
+  				class:'node-view',
+  				style:{
+  					transform: 'scale('+this.engine.state.zoom/100.0+') translate('+this.engine.state.offsetX+'px,'+this.engine.state.offsetY+'px)',
+  					width: '100%',
+  					height: '100%'
+  				}
+  			},
+  			map(this.engine.state.nodes, function (node) {
+          var model = this$1.engine.getNodeFactory(node.type).generateModel(node, this$1.engine);
+  				return h(
+  					nodeWidget,
+            {
+              key: node.id,
+              props: { node: node, engine: this$1.engine },
+            },
+  					[
+              h(
+                model.component,
+                { props: model.propsData }
+              )
+            ]
+          )
+        })
+  		)
+  	}
+  };
 
 var linkWidget = {
-  name: "LinkWidget",
-  props: {
-    width: { default: 3 },
-    link: {},
-    engine: {
-      required: true
-    },
-    smooth: { default: false },
-    newPoint: { default: function _default(id) {} }
-  },
-  data: function data() {
-    return {
-      selected: false
-    };
-  },
-
-  methods: {
-    getPoint: function getPoint(index) {
-      if (index === 0) {
-        return this.link.points[index];
-      }
-      if (this.link.target !== null && index === this.link.points.length - 1) {
-        return this.link.points[index];
-      }
+    name: "LinkWidget",
+    props: {
+      width: { default: 3 },
+			link: {},
+			engine: {
+        required: true,
+      },
+			smooth: { default: false },
+			newPoint: { default: function (id) {} }
+		},
+    data: function data() {
       return {
-        x: this.link.points[index].x,
-        y: this.link.points[index].y
-      };
-    },
-    setSelected: function setSelected(selected) {
-      this.selected = selected;
-      if (selected) {
-        this.engine.setSelectedLink(selected ? this.link : null);
+        selected: false,
       }
     },
+    methods: {
+      getPoint: function getPoint(index){
+    		if(index === 0){
+    			return this.link.points[index];
+    		}
+    		if(this.link.target !== null && index === this.link.points.length-1){
+    			return this.link.points[index];
+    		}
+    		return {
+    			x: this.link.points[index].x,
+    			y: this.link.points[index].y
+    		};
+    	},
 
+    	setSelected: function setSelected(selected){
+    		this.selected = selected;
+    		if(selected){
+    			this.engine.setSelectedLink(selected ? this.link : null);
+    		}
+    	},
 
-    generatePoint: function generatePoint(h, pointIndex) {
-      var _this = this;
+    	generatePoint: function(h, pointIndex){
+    		var this$1 = this;
 
-      return h('g', {
-        key: "point-" + this.link.points[pointIndex].id
-      }, [h('circle', {
-        class: 'point pointui',
-        attrs: {
-          cx: this.getPoint(pointIndex).x,
-          cy: this.getPoint(pointIndex).y,
-          r: 5
-        }
-      }), h('circle', {
-        class: 'point',
-        attrs: {
-          'data-linkid': this.link.id,
-          'data-id': this.link.points[pointIndex].id,
-          cx: this.getPoint(pointIndex).x,
-          cy: this.getPoint(pointIndex).y,
-          r: 15,
-          opacity: 0
-        },
-        on: {
-          mouseleave: function mouseleave() {
-            _this.setSelected(false);
+    		return h(
+          'g',
+          {
+            key: ("point-" + (this.link.points[pointIndex].id)),
           },
-          mouseenter: function mouseenter() {
-            _this.setSelected(true);
-          }
-        }
-      })]);
-    },
+          [
+            h(
+              'circle',
+              {
+        				class: 'point pointui',
+                attrs: {
+                  cx: this.getPoint(pointIndex).x,
+                  cy: this.getPoint(pointIndex).y,
+                  r: 5,
+                },
+        			}
+            ),
+      			h(
+              'circle',
+              {
+        				class: 'point',
+                attrs: {
+                  'data-linkid': this.link.id,
+                  'data-id': this.link.points[pointIndex].id,
+                  cx: this.getPoint(pointIndex).x,
+                  cy: this.getPoint(pointIndex).y,
+                  r: 15,
+                  opacity: 0,
+                },
+                on: {
+                  mouseleave: function () {
+                    this$1.setSelected(false);
+                  },
+                  mouseenter: function () {
+                    this$1.setSelected(true);
+                  },
+                },
+        			}
+            )
+          ]
+    		)
+    	},
 
-    generateLink: function generateLink(h, extraProps) {
-      var _this2 = this;
+    	generateLink: function(h, extraProps){
+    		var this$1 = this;
 
-      var Bottom = h('path', merge({
-        class: this.selected ? 'selected' : '',
-        attrs: {
-          'stroke-width': this.width,
-          stroke: 'black'
-        }
-      }, extraProps));
-
-      var Top = h('path', merge({
-        on: {
-          mouseleave: function mouseleave() {
-            _this2.setSelected(false);
-          },
-          mouseenter: function mouseenter() {
-            _this2.setSelected(true);
-          },
-          contextmenu: function contextmenu(event) {
-            event.preventDefault();
-            _this2.engine.removeLink(_this2.link);
-          }
-        },
-        attrs: {
-          'stroke-opacity': 0,
-          'stroke-width': 20
-        }
-      }, extraProps));
-
-      return h('g', { key: "link-" + extraProps.id }, [Bottom, Top]);
-    }
-  },
-  computed: {},
-  render: function render(h) {
-    var _this3 = this;
-
-    var points = this.link.points;
-    points.forEach(function (point) {
-      if (point.id === undefined) {
-        point.id = _this3.engine.UID();
-      }
-    });
-    var paths = [];
-    if (points.length === 2) {
-      var margin = 50;
-      if (Math.abs(this.getPoint(0).x - this.getPoint(1).x) < 50) {
-        margin = 5;
-      }
-
-      paths.push(this.generateLink(h, {
-        attrs: {
-          id: '0',
-          d: " M" + this.getPoint(0).x + " " + this.getPoint(0).y + " C" + (this.getPoint(0).x + margin) + " " + this.getPoint(0).y + " " + (this.getPoint(1).x - margin) + " " + this.getPoint(1).y + " " + this.getPoint(1).x + " " + this.getPoint(1).y
-        },
-        on: {
-          mousedown: function mousedown(event) {
-            var point = _this3.engine.getRelativeMousePoint(event);
-            point.id = _this3.engine.UID();
-            _this3.link.points.splice(1, 0, point);
-            // this.forceUpdate();
-            _this3.newPoint(point.id);
-          }
-        }
-      }));
-      if (this.link.target === null) {
-        paths.push(this.generatePoint(h, 1));
-      }
-    } else {
-      var ds = [];
-      if (this.smooth) {
-        ds.push(" M" + this.getPoint(0).x + " " + this.getPoint(0).y + " C " + (this.getPoint(0).x + 50) + " " + this.getPoint(0).y + " " + this.getPoint(1).x + " " + this.getPoint(1).y + " " + this.getPoint(1).x + " " + this.getPoint(1).y);
-        for (var i = 1; i < points.length - 2; i++) {
-          ds.push(" M " + this.getPoint(i).x + " " + this.getPoint(i).y + " L " + this.getPoint(i + 1).x + " " + this.getPoint(i + 1).y);
-        }
-        ds.push(" M" + this.getPoint(i).x + " " + this.getPoint(i).y + " C " + this.getPoint(i).x + " " + this.getPoint(i).y + " " + (this.getPoint(i + 1).x - 50) + " " + this.getPoint(i + 1).y + " " + this.getPoint(i + 1).x + " " + this.getPoint(i + 1).y);
-      } else {
-        var ds = [];
-        for (var i = 0; i < points.length - 1; i++) {
-          ds.push(" M " + this.getPoint(i).x + " " + this.getPoint(i).y + " L " + this.getPoint(i + 1).x + " " + this.getPoint(i + 1).y);
-        }
-      }
-
-      paths = ds.map(function (data, index) {
-        return _this3.generateLink(h, {
+    		var Bottom = h('path', merge({
+    			class: this.selected ? 'selected' : '',
           attrs: {
-            id: index,
-            'data-link': _this3.link.id,
-            'data-point': index,
-            d: data
+            'stroke-width': this.width,
+            stroke: 'black',
+          },
+    		},extraProps));
+
+    		var Top = h('path', merge({
+          on: {
+            mouseleave: function () {
+              this$1.setSelected(false);
+            },
+            mouseenter: function () {
+              this$1.setSelected(true);
+            },
+            contextmenu: function (event) {
+      				event.preventDefault();
+      				this$1.engine.removeLink(this$1.link);
+      			},
+          },
+          attrs: {
+            'stroke-opacity':0,
+            'stroke-width': 20,
+          },
+    		},extraProps));
+
+    		return h(
+          'g',
+          { key: ("link-" + (extraProps.id)) },
+          [
+            Bottom,
+            Top
+          ]
+    		)
+    	},
+    },
+    render: function render(h) {
+      var this$1 = this;
+
+      var points = this.link.points;
+  		var paths = [];
+  		if(points.length === 2) {
+  			var margin = 50;
+  			if (Math.abs(this.getPoint(0).x-this.getPoint(1).x) < 50){
+  				margin = 5;
+  			}
+
+  			paths.push(this.generateLink(h, {
+          attrs: {
+            id: '0',
+            d: (" M" + (this.getPoint(0).x) + " " + (this.getPoint(0).y) + " C" + (this.getPoint(0).x + margin) + " " + (this.getPoint(0).y) + " " + (this.getPoint(1).x-margin) + " " + (this.getPoint(1).y) + " " + (this.getPoint(1).x) + " " + (this.getPoint(1).y)),
           },
           on: {
-            mousedown: function mousedown(event) {
-              var point = _this3.engine.getRelativeMousePoint(event);
-              point.id = _this3.engine.UID();
-              _this3.link.points.splice(index + 1, 0, point);
-              _this3.newPoint(point.id);
-            }
-          }
-        });
-      });
+            mousedown: function (event) {
+    					var point = this$1.engine.getRelativeMousePoint(event);
+    					point.id = this$1.engine.UID();
+    					this$1.link.points.splice(1,0,point);
+    					// this.forceUpdate();
+    					this$1.newPoint(point.id);
+    				},
+          },
+  			}));
+  			if (this.link.target === null) {
+  				paths.push(this.generatePoint(h, 1));
+  			}
+  		}else{
+  			var ds = [];
+  			if(this.smooth){
+  				ds.push(" M"+this.getPoint(0).x+" "+this.getPoint(0).y+" C "+(this.getPoint(0).x+50)+" "+this.getPoint(0).y+" "+this.getPoint(1).x+" "+this.getPoint(1).y+" "+this.getPoint(1).x+" "+this.getPoint(1).y);
+  				for(var i = 1;i < points.length-2;i++){
+  					ds.push(" M "+this$1.getPoint(i).x+" "+this$1.getPoint(i).y+" L "+this$1.getPoint(i+1).x+" "+this$1.getPoint(i+1).y);
+  				}
+  				ds.push(" M"+this.getPoint(i).x+" "+this.getPoint(i).y+" C "+this.getPoint(i).x+" "+this.getPoint(i).y+" "+(this.getPoint(i+1).x-50)+" "+this.getPoint(i+1).y+" "+this.getPoint(i+1).x+" "+this.getPoint(i+1).y);
+  			}else{
+  				var ds = [];
+  				for(var i = 0;i < points.length-1;i++){
+  					ds.push(" M "+this$1.getPoint(i).x+" "+this$1.getPoint(i).y+" L "+this$1.getPoint(i+1).x+" "+this$1.getPoint(i+1).y);
+  				}
+  			}
 
-      //render the circles
-      for (var i = 1; i < points.length - 1; i++) {
-        paths.push(this.generatePoint(h, i));
-      }
+  			paths = ds.map(function (data,index) {
+  				return this$1.generateLink(h, {
+            attrs: {
+              id:index,
+    					'data-link': this$1.link.id,
+    					'data-point': index,
+              d: data,
+            },
+  					on: {
+              mousedown: function (event) {
+                var point = this$1.engine.getRelativeMousePoint(event);
+                point.id = this$1.engine.UID();
+                this$1.link.points.splice(index+1,0,point);
+                this$1.newPoint(point.id);
+              },
+            },
+  				})
+  			});
 
-      if (this.link.target === null) {
-        paths.push(this.generatePoint(h, points.length - 1));
-      }
+
+  			//render the circles
+  			for(var i = 1;i < points.length-1;i++){
+  				paths.push(this$1.generatePoint(h, i));
+  			}
+
+  			if (this.link.target === null) {
+  				paths.push(this.generatePoint(h, points.length-1));
+  			}
+  		}
+
+
+  		return (
+  			h('g', null,	paths)
+  		)
     }
+  };
 
-    return h('g', null, paths);
-  }
-};
-
-var svgWidget = { render: function render() {
-    var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('svg', { staticClass: "storm-flow-canvas", style: _vm.styles }, _vm._l(_vm.engine.state.links, function (link) {
-      return _c('link-widget', { key: link.id, attrs: { "engine": _vm.engine, "link": link, "new-point": _vm.newPoint } });
-    }));
-  }, staticRenderFns: [],
-  name: "SVGWidget",
-  components: {
-    linkWidget: linkWidget
-  },
-  props: {
-    engine: {
-      required: true
+var svgWidget = {render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('svg',{staticClass:"storm-flow-canvas",style:(_vm.styles)},_vm._l((_vm.engine.state.links),function(link){return _c('link-widget',{key:link.id,attrs:{"engine":_vm.engine,"link":link,"new-point":_vm.newPoint}})}))},staticRenderFns: [],
+    name: "SVGWidget",
+    components: {
+      linkWidget: linkWidget,
     },
-    newPoint: {
-      default: function _default(link, pointID) {}
-    }
-  },
-  data: function data() {
-    return {};
-  },
+    props: {
+			engine: {
+        required: true,
+      },
+      newPoint: {
+        default: function default$1(link,pointID) {
 
-  computed: {
-    styles: function styles() {
-      return {
-        transform: 'scale(' + this.engine.state.zoom / 100.0 + ') translate(' + this.engine.state.offsetX + 'px, ' + this.engine.state.offsetY + 'px)',
-        width: '100%',
-        height: '100%'
-      };
-    }
-  }
-};
+  			}
+      }
+		},
+    data: function data() {
+      return {}
+    },
+    computed: {
+      styles: function styles() {
+        return {
+          transform: ("scale(" + (this.engine.state.zoom/100.0) + ") translate(" + (this.engine.state.offsetX) + "px, " + (this.engine.state.offsetY) + "px)"),
+          width: '100%',
+          height: '100%',
+        }
+      },
+    },
+  };
 
 var setState$1 = {
   methods: {
     setState: function setState(data) {
-      var _this = this;
+      var this$1 = this;
 
-      forEach(data, function (val, key) {
-        return _this.$set(_this, key, val);
-      });
+      forEach(data, function (val, key) { return this$1.$set(this$1, key, val); });
     }
-  }
+  },
 };
 
-var canvasWidget = { render: function render() {
-    var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', { ref: "canvas", staticClass: "storm-flow-canvas", on: { "wheel": _vm.onWheel, "mousemove": _vm.onMouseMove, "mousedown": _vm.onMouseDown, "mouseup": _vm.onMouseUp } }, [_c('svg-widget', { attrs: { "engine": _vm.engine, "new-point": _vm.newPoint } }), _c('node-view', { attrs: { "engine": _vm.engine } })], 1);
-  }, staticRenderFns: [],
-  name: "CanvasWidget",
-  mixins: [setState$1],
-  components: {
-    nodeView: nodeView,
-    svgWidget: svgWidget
-  },
-  props: {
-    engine: {
-      required: true
-    }
-  },
-  data: function data() {
-    return {
-      selectedPointID: null,
-      selectedLink: null,
-      selectedPort: null,
-      selectedModel: null,
-      initialX: null,
-      initialY: null,
-      initialObjectX: null,
-      initialObjectY: null,
-      listenerID: null,
-
-      newPoint: function newPoint(link, pointID) {
-        //
-        return this.$set({
-          selectedPointID: pointID,
-          selectedLink: link
-        });
+var canvasWidget = {render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{ref:"canvas",staticClass:"storm-flow-canvas",on:{"wheel":_vm.onWheel,"mousemove":_vm.onMouseMove,"mousedown":_vm.onMouseDown,"mouseup":_vm.onMouseUp}},[_c('svg-widget',{attrs:{"engine":_vm.engine,"new-point":_vm.newPoint}}),_c('node-view',{attrs:{"engine":_vm.engine}})],1)},staticRenderFns: [],
+    name: "CanvasWidget",
+    mixins: [setState$1],
+    components: {
+      nodeView: nodeView,
+      svgWidget: svgWidget,
+    },
+    props: {
+			engine: {
+        required: true,
       }
-    };
-  },
-  mounted: function mounted() {
-    var _this = this;
-
-    this.engine.state.canvas = this.$refs.canvas;
-
-    //check for any links that dont have points
-    // forEach(this.engine.state.links, (link) => {
-    //   if(link.points.length === 0){
-    //     link.points.push(this.engine.getPortCenter(this.engine.getNode(link.source),link.sourcePort));
-    //     link.points.push(this.engine.getPortCenter(this.engine.getNode(link.target),link.targetPort));
-    //     // this.forceUpdate();
-    //   }
-    // })
-
-
-    //add a keybaord listener
-    this.windowListener = window.addEventListener('keydown', function (event) {
-      if (event.keyCode === 46) {
-        if (_this.engine.state.selectedLink) {
-          _this.engine.removeLink(_this.engine.state.selectedLink);
-        } else if (_this.engine.state.selectedNode) {
-          _this.engine.removeNode(_this.engine.state.selectedNode);
-        }
-      }
-    });
-    window.focus();
-  },
-
-  methods: {
-    resetState: function resetState() {
-      this.setState({
+		},
+    data: function data() {
+      return {
+        selectedPointID: null,
         selectedLink: null,
         selectedPort: null,
-        selectedPointID: null,
         selectedModel: null,
         initialX: null,
         initialY: null,
         initialObjectX: null,
-        initialObjectY: null
-      });
-    },
-    onWheel: function onWheel(event) {
-      this.engine.setZoom(this.engine.state.zoom + event.deltaY / 60);
-      this.engine.repaintNodes([]);
-    },
-    onMouseMove: function onMouseMove(event) {
+        initialObjectY: null,
+        listenerID: null,
 
-      //move the node
-      if (this.selectedModel) {
-        this.selectedModel.x = this.initialObjectX + (event.pageX - this.initialX) / (this.engine.state.zoom / 100);
-        this.selectedModel.y = this.initialObjectY + (event.pageY - this.initialY) / (this.engine.state.zoom / 100);
-        this.engine.repaintNodes([this.selectedModel]);
+        newPoint: function newPoint(link, pointID) { //
+          return this.$set({
+						selectedPointID: pointID,
+						selectedLink: link
+					})
+        },
       }
+    },
 
-      //move the point
-      else if (this.selectedPointID) {
-          var point = find(this.selectedLink.points, { id: this.selectedPointID });
+    mounted: function mounted() {
+      var this$1 = this;
+
+      this.engine.state.canvas = this.$refs.canvas;
+
+
+      //check for any links that dont have points
+      // forEach(this.engine.state.links, (link) => {
+      //   if(link.points.length === 0){
+      //     link.points.push(this.engine.getPortCenter(this.engine.getNode(link.source),link.sourcePort));
+      //     link.points.push(this.engine.getPortCenter(this.engine.getNode(link.target),link.targetPort));
+      //     // this.forceUpdate();
+      //   }
+      // })
+
+
+      //add a keybaord listener
+      this.windowListener = window.addEventListener('keydown', function (event) {
+        if(event.keyCode === 46){
+          if(this$1.engine.state.selectedLink){
+            this$1.engine.removeLink(this$1.engine.state.selectedLink);
+          } else if(this$1.engine.state.selectedNode) {
+            this$1.engine.removeNode(this$1.engine.state.selectedNode);
+          }
+        }
+      });
+      window.focus();
+    },
+    methods: {
+      resetState: function resetState() {
+        this.setState({
+          selectedLink: null,
+          selectedPort: null,
+          selectedPointID: null,
+          selectedModel: null,
+          initialX: null,
+          initialY: null,
+          initialObjectX: null,
+          initialObjectY: null
+        });
+      },
+      onWheel: function onWheel(event) {
+        this.engine.setZoom(this.engine.state.zoom+(event.deltaY/60));
+        this.engine.repaintNodes([]);
+      },
+      onMouseMove: function onMouseMove(event) {
+
+        //move the node
+        if(this.selectedModel){
+          this.selectedModel.x = this.initialObjectX+((event.pageX-this.initialX)/(this.engine.state.zoom/100));
+          this.selectedModel.y = this.initialObjectY+((event.pageY-this.initialY)/(this.engine.state.zoom/100));
+          this.engine.repaintNodes([this.selectedModel]);
+        }
+
+        //move the point
+        else if(this.selectedPointID){
+          var point = find(this.selectedLink.points,{id:this.selectedPointID});
           var rel = this.engine.getRelativeMousePoint(event);
           point.x = rel.x;
           point.y = rel.y;
@@ -18283,316 +18325,288 @@ var canvasWidget = { render: function render() {
         }
 
         //move the canvas
-        else if (this.initialObjectX !== null) {
-            this.engine.setOffset(this.initialObjectX + (event.pageX - this.initialX) / (this.engine.state.zoom / 100), this.initialObjectY + (event.pageY - this.initialY) / (this.engine.state.zoom / 100));
-            this.engine.repaintNodes([]);
-          }
-    },
-    onMouseDown: function onMouseDown(event) {
-
-      this.engine.setSelectedNode(null);
-
-      //look for a port
-      var element = event.target.closest('.port[data-name]');
-      if (element) {
-        var nodeElement = event.target.closest('.node[data-nodeid]');
-        var node = this.engine.getNode(nodeElement.getAttribute('data-nodeid'));
-        var port = element.getAttribute('data-name');
-        var rel = this.engine.getRelativeMousePoint(event);
-        var id = this.engine.UID();
-
-        var x = this.engine.getPortCenter(node, port).x;
-        var y = this.engine.getPortCenter(node, port).y;
-        var FinalLink = this.engine.addLink({
-          source: nodeElement.dataset.nodeid,
-          sourcePort: element.dataset.name,
-          points: [{ x: x, y: y }, { x: rel.x, y: rel.y, id: id }]
-        });
-        this.selectedPointID = id;
-        this.selectedLink = FinalLink;
-        return;
-      }
-
-      //look for a point
-      element = event.target.closest('.point[data-id]');
-      if (element) {
-        var _id = element.getAttribute('data-id');
-        //chrome fix o_O
-        if (element.dataset === undefined) {
-          element.dataset = {
-            id: _id,
-            linkid: element.getAttribute('data-linkid')
-          };
+        else if(this.initialObjectX !== null){
+          this.engine.setOffset(
+            this.initialObjectX+((event.pageX-this.initialX)/(this.engine.state.zoom/100)),
+            this.initialObjectY+((event.pageY-this.initialY)/(this.engine.state.zoom/100))
+          );
+          this.engine.repaintNodes([]);
         }
-        var point = this.engine.getPoint(_id);
+
+      },
+      onMouseDown: function onMouseDown(event) {
+
+        this.engine.setSelectedNode(null);
+
+        //look for a port
+        var element = event.target.closest('.port[data-name]');
+        if(element){
+          var nodeElement = event.target.closest('.node[data-nodeid]');
+          var node = this.engine.getNode(nodeElement.getAttribute('data-nodeid'));
+          var port = element.getAttribute('data-name');
+          var rel = this.engine.getRelativeMousePoint(event);
+          var id = this.engine.UID();
+
+          var x = this.engine.getPortCenter(node, port).x;
+          var y = this.engine.getPortCenter(node, port).y;
+          var FinalLink = this.engine.addLink({
+            source: nodeElement.dataset.nodeid,
+            sourcePort: element.dataset.name,
+            points:[{ x: x, y: y },{ x:rel.x, y:rel.y, id: id }]
+          });
+          this.selectedPointID = id;
+          this.selectedLink = FinalLink;
+          return;
+        }
+
+        //look for a point
+        element = event.target.closest('.point[data-id]');
+        if(element){
+          var id$1 = element.getAttribute('data-id');
+          //chrome fix o_O
+          if(element.dataset === undefined){
+            element.dataset = {
+              id: id$1,
+              linkid: element.getAttribute('data-linkid')
+            };
+          }
+          var point = this.engine.getPoint(id$1);
+          this.setState({
+            initialX: event.pageX,
+            initialY: event.pageY,
+            initialObjectX: point.x,
+            initialObjectY: point.y,
+          });
+          this.selectedPointID = element.dataset.id;
+          this.selectedLink = this.engine.getLink(element.dataset.linkid);
+          return
+        }
+
+        //look for an element
+        element = event.target.closest('.node[data-nodeid]');
+        if(element){
+          var model = this.engine.getNode(element.dataset['nodeid']);
+          this.engine.setSelectedNode(model);
+          this.setState({
+            selectedModel: model,
+            initialX: event.pageX,
+            initialY: event.pageY,
+            initialObjectX: model.x,
+            initialObjectY: model.y
+          });
+          return;
+        }
+
+        //probably just the canvas
         this.setState({
           initialX: event.pageX,
           initialY: event.pageY,
-          initialObjectX: point.x,
-          initialObjectY: point.y
+          initialObjectX: this.engine.state.offsetX,
+          initialObjectY: this.engine.state.offsetY
         });
-        this.selectedPointID = element.dataset.id;
-        this.selectedLink = this.engine.getLink(element.dataset.linkid);
-        return;
-      }
+      },
+      onMouseUp: function onMouseUp(event){
+        var this$1 = this;
 
-      //look for an element
-      element = event.target.closest('.node[data-nodeid]');
-      if (element) {
-        var model = this.engine.getNode(element.dataset['nodeid']);
-        this.engine.setSelectedNode(model);
-        this.setState({
-          selectedModel: model,
-          initialX: event.pageX,
-          initialY: event.pageY,
-          initialObjectX: model.x,
-          initialObjectY: model.y
-        });
-        return;
-      }
-
-      //probably just the canvas
-      this.setState({
-        initialX: event.pageX,
-        initialY: event.pageY,
-        initialObjectX: this.engine.state.offsetX,
-        initialObjectY: this.engine.state.offsetY
-      });
-    },
-    onMouseUp: function onMouseUp(event) {
-      var _this2 = this;
-
-      if (!this.selectedPointID) this.resetState();
-      if (this.selectedPointID) {
-        var element;
-        var nodeElement;
-        var nodeObject;
-        var NodeFactory;
-
-        (function () {
-          var point = _this2.engine.getPoint(_this2.selectedPointID);
-          element = event.target.closest('.port[data-name]');
-
-          if (!element) _this2.resetState();
-          if (element) {
-            nodeElement = event.target.closest('.node[data-nodeid]');
+        if(!this.selectedPointID) { this.resetState(); }
+        if(this.selectedPointID){
+          var point = this.engine.getPoint(this.selectedPointID);
+          var element = event.target.closest('.port[data-name]');
+          if(!element) { this.resetState(); }
+          if(element){
+            var nodeElement = event.target.closest('.node[data-nodeid]');
 
             //cant add link to self
-
-            if (_this2.selectedLink.source === nodeElement.dataset.nodeid) {
-              _this2.engine.removeLink(_this2.selectedLink);
+            if(this.selectedLink.source === nodeElement.dataset.nodeid){
+              this.engine.removeLink(this.selectedLink);
             }
 
             //do the merge
-            else {
-                nodeObject = _this2.engine.getNode(nodeElement.dataset.nodeid);
-                NodeFactory = _this2.engine.getNodeFactory(nodeObject.type);
+            else{
 
-                //check if the port is allowed by using the factory
+              var nodeObject = this.engine.getNode(nodeElement.dataset.nodeid);
+              var NodeFactory = this.engine.getNodeFactory(nodeObject.type);
 
-                var isPortAllowed = NodeFactory.isPortAllowed(_this2.engine.getNode(_this2.selectedLink.source), _this2.selectedLink.sourcePort, nodeObject, element.dataset.name);
+              //check if the port is allowed by using the factory
+              var isPortAllowed = NodeFactory.isPortAllowed(
+                this.engine.getNode(this.selectedLink.source),
+                this.selectedLink.sourcePort,
+                nodeObject,element.dataset.name);
 
-                if (!isPortAllowed) _this2.resetState();
-                if (isPortAllowed) {
+              if (!isPortAllowed) { this.resetState(); }
+              if (isPortAllowed) {
 
-                  _this2.engine.state.validators.onEdgeUpdate(_this2.selectedLink).then(function (valid) {
+                this.engine.state.validators.onEdgeUpdate(this.selectedLink)
+                  .then(function (valid) {
                     if (valid) {
-                      _this2.selectedLink.target = nodeElement.dataset.nodeid;
-                      _this2.selectedLink.targetPort = element.dataset.name;
-                      _this2.engine.repaintNodes([nodeObject]);
+                      this$1.selectedLink.target = nodeElement.dataset.nodeid;
+                      this$1.selectedLink.targetPort = element.dataset.name;
+                      this$1.engine.repaintNodes([nodeObject]);
 
-                      _this2.engine.fireEvent({
-                        type: 'link:update',
-                        data: _this2.selectedLink
+                      this$1.engine.fireEvent({
+                        type:'link:update',
+                        data: this$1.selectedLink,
                       });
                     } else {
                       //revert position
-                      point.x = _this2.initialObjectX || point.x + 100;
-                      point.y = _this2.initialObjectY || point.y + 100;
+                      point.x = this$1.initialObjectX || point.x + 100;
+                      point.y = this$1.initialObjectY || point.y + 100;
                       console.log(point);
                     }
-                    _this2.resetState();
+                    this$1.resetState();
                   });
-                }
               }
+            }
           }
-        })();
-      }
-    }
-  }
-};
+        }
+      },
+    },
+  };
 
 // import { map } from 'lodash-es'
 
-var portWidget = { render: function render() {
-    var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', { class: _vm.classes, attrs: { "data-nodeid": _vm.node.id, "data-name": _vm.name }, on: { "mouseenter": _vm.onMouseEnter, "mouseleave": _vm.onMouseLeave } });
-  }, staticRenderFns: [],
-  name: "PortWidget",
-  props: {
-    name: {
-      default: 'unknown'
-    },
-    node: {}
-  },
-  data: function data() {
-    return {
-      selected: false
-    };
-  },
-
-  methods: {
-    onMouseEnter: function onMouseEnter() {
-      this.selected = true;
-    },
-    onMouseLeave: function onMouseLeave() {
-      this.selected = false;
-    }
-  },
-  computed: {
-    classes: function classes() {
-      return "port" + (this.selected ? ' selected' : '');
-    }
-  }
-};
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-// import { map } from 'lodash-es'
-var basicNodeWidget = { render: function render() {
-    var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', { staticClass: "basic-node", style: { backgroundColor: _vm.color } }, [_c('div', { staticClass: "title" }, [_c('div', { staticClass: "name" }, [_vm._v(_vm._s(_vm.name))]), _c('div', { staticClass: "fa fa-close", on: { "click": _vm.removeAction } })]), _c('div', { staticClass: "ports" }, [_c('div', { staticClass: "in" }, [_vm._l(_vm.formattedInPorts, function (port) {
-      return _c('div', { key: port, staticClass: "in-port" }, [_c('port-widget', { attrs: { "name": _vm.getName(port), "node": _vm.node } }), _c('div', { staticClass: "name" }, [_vm._v(_vm._s(_vm.getDisplay(port)))])], 1);
-    }), _vm._l(_vm.formattedOutPorts, function (port) {
-      return _c('div', { key: port, staticClass: "out-port" }, [_c('port-widget', { attrs: { "name": _vm.getName(port), "node": _vm.node } }), _c('div', { staticClass: "name" }, [_vm._v(_vm._s(_vm.getDisplay(port)))])], 1);
-    })], 2)])]);
-  }, staticRenderFns: [],
-  name: "BasicNodeWidget",
-  components: {
-    portWidget: portWidget
-  },
-  props: {
-    name: { default: 'Node' },
-    node: {},
-    inPorts: { default: function _default() {
-        return [];
-      } },
-    outPorts: { default: function _default() {
-        return [];
-      } },
-    port: { default: function _default() {
-        return 'default';
-      } },
-    color: { default: 'rgb(50,50,50)' },
-    removeAction: { default: function _default() {
-        return function () {
-          console.log("remove node");
-        };
-      } }
-  },
-  data: function data() {
-    return {};
-  },
-
-  methods: {
-    onMouseDown: function onMouseDown() {
-      this.engine.setSelectedNode(this.node);
-    },
-    getName: function getName(port) {
-      return (typeof port === 'undefined' ? 'undefined' : _typeof(port)) === 'object' ? port.name : port;
-    },
-    getDisplay: function getDisplay(port) {
-      return (typeof port === 'undefined' ? 'undefined' : _typeof(port)) === 'object' ? port.display : port;
-    }
-  },
-  computed: {
-    styles: function styles() {
+  var portWidget = {render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{class:_vm.classes,attrs:{"data-nodeid":_vm.node.id,"data-name":_vm.name},on:{"mouseenter":_vm.onMouseEnter,"mouseleave":_vm.onMouseLeave}})},staticRenderFns: [],
+    name: "PortWidget",
+    props: {
+			name: {
+        default: 'unknown'
+      },
+			node: {},
+		},
+    data: function data() {
       return {
-        top: this.node.y + 'px',
-        left: this.node.x + 'px'
-      };
-    },
-    classes: function classes() {
-      return 'node' + (this.engine.state.selectedNode && this.engine.state.selectedNode.id == this.node.id ? ' selected' : '');
-    },
-    formattedInPorts: function formattedInPorts() {
-      if (!this.inPorts.length && !this.outPorts.length) {
-        return [this.port];
-      } else {
-        return Array.isArray(this.inPorts) ? this.inPorts : [this.inPorts];
+        selected: false,
       }
     },
-    formattedOutPorts: function formattedOutPorts() {
-      return Array.isArray(this.outPorts) ? this.outPorts : [this.outPorts];
-    }
-  }
-};
+    methods: {
+      onMouseEnter: function onMouseEnter(){
+        this.selected = true;
+      },
+      onMouseLeave: function onMouseLeave(){
+        this.selected = false;
+      },
+    },
+    computed: {
+      classes: function classes() {
+        return ("port" + (this.selected ? ' selected' : ''))
+      },
+    },
+  };
 
-var _extends$1 = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+// import { map } from 'lodash-es'
+  var basicNodeWidget = {render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"basic-node",style:({ backgroundColor: _vm.color })},[_c('div',{staticClass:"title"},[_c('div',{staticClass:"name"},[_vm._v(_vm._s(_vm.name))]),_c('div',{staticClass:"fa fa-close",on:{"click":_vm.removeAction}})]),_c('div',{staticClass:"ports"},[_c('div',{staticClass:"in"},[_vm._l((_vm.formattedInPorts),function(port){return _c('div',{key:port,staticClass:"in-port"},[_c('port-widget',{attrs:{"name":_vm.getName(port),"node":_vm.node}}),_c('div',{staticClass:"name"},[_vm._v(_vm._s(_vm.getDisplay(port)))])],1)}),_vm._l((_vm.formattedOutPorts),function(port){return _c('div',{key:port,staticClass:"out-port"},[_c('port-widget',{attrs:{"name":_vm.getName(port),"node":_vm.node}}),_c('div',{staticClass:"name"},[_vm._v(_vm._s(_vm.getDisplay(port)))])],1)})],2)])])},staticRenderFns: [],
+    name: "BasicNodeWidget",
+    components: {
+      portWidget: portWidget,
+    },
+    props: {
+      name: { default: 'Node' },
+			node: {},
+			inPorts: { default: function () { return []; } },
+			outPorts: { default: function () { return []; } },
+			port: { default: function () { return 'default'; } },
+			color: { default: 'rgb(50,50,50)' },
+			removeAction: { default: function () { return (function () { console.log("remove node");}); } },
+		},
+    data: function data() {
+      return {}
+    },
+    methods: {
+      onMouseDown: function onMouseDown(){
+        this.engine.setSelectedNode(this.node);
+      },
+      getName: function getName(port) {
+        return typeof port === 'object' ? port.name : port
+      },
+      getDisplay: function getDisplay(port) {
+        return typeof port === 'object' ? port.display : port
 
-var _typeof$1 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+      },
+    },
+    computed: {
+      styles: function styles() {
+        return {
+          top: ((this.node.y) + "px"),
+          left: ((this.node.x) + "px"),
+        }
+      },
+      classes: function classes() {
+        return 'node'+ (this.engine.state.selectedNode && this.engine.state.selectedNode.id == this.node.id ? ' selected' : '')
+      },
+      formattedInPorts: function formattedInPorts() {
+        if (!this.inPorts.length && !this.outPorts.length) {
+          return [this.port]
+        } else {
+          return Array.isArray(this.inPorts) ? this.inPorts : [this.inPorts]
+        }
+      },
+      formattedOutPorts: function formattedOutPorts() {
+        return Array.isArray(this.outPorts) ? this.outPorts : [this.outPorts]
+      },
+    },
+  };
 
 /**
  * @author Dylan Vorster
  */
 
-var validatorNoop$1 = function validatorNoop$1(node) {
-	return Promise.resolve(true);
-};
+var validatorNoop$1 = function (node) { return Promise.resolve(true) };
 
-var Engine = function () {
+var Engine = function() {
 	return {
-		state: {
-			links: {},
-			nodes: {},
+		state:{
+			links:{},
+			nodes:{},
 			factories: {},
 			canvas: null,
-			offsetX: 0,
-			offsetY: 0,
+			offsetX:0,
+			offsetY:0,
 			zoom: 100,
-			listeners: {},
+			listeners:{},
 			selectedLink: null,
 			selectedNode: null,
 
 			updatingNodes: null,
 			updatingLinks: null,
-			validators: {
-				onNodeRemove: validatorNoop$1,
-				onEdgeRemove: validatorNoop$1,
-				onEdgeUpdate: validatorNoop$1
-			}
+      validators: {
+        onNodeRemove: validatorNoop$1,
+        onEdgeRemove: validatorNoop$1,
+        onEdgeUpdate: validatorNoop$1,
+      },
 		},
 
-		repaintLinks: function repaintLinks(links) {
-			var _this = this;
+		repaintLinks: function(links){
+      var this$1 = this;
 
-			Vue.set(this.state, 'updatingNodes', {});
-			Vue.set(this.state, 'updatingLinks', {});
+      Vue.set(this.state, 'updatingNodes', {});
+      Vue.set(this.state, 'updatingLinks', {});
 			links.forEach(function (link) {
-				Vue.set(_this.state.updatingLinks, link.id, link);
+				Vue.set(this$1.state.updatingLinks, link.id, link);
 			});
 			this.update();
 		},
 
-		repaintNodes: function repaintNodes(nodes) {
-			var _this2 = this;
+		repaintNodes: function(nodes){
+      var this$1 = this;
 
 			// this.state.updatingNodes = {};
 			// this.state.updatingLinks = {};
-			Vue.set(this.state, 'updatingNodes', {});
-			Vue.set(this.state, 'updatingLinks', {});
+      Vue.set(this.state, 'updatingNodes', {});
+      Vue.set(this.state, 'updatingLinks', {});
 
 			//store the updating node is's
 			nodes.forEach(function (node) {
-				Vue.set(_this2.state.updatingNodes, node.id, node);
-				_this2.getNodeLinks(node).forEach(function (link) {
-					Vue.set(_this2.state.updatingLinks, link.id, link);
-					if (link.points.length < 2) {
+				Vue.set(this$1.state.updatingNodes, node.id, node);
+				this$1.getNodeLinks(node).forEach(function (link) {
+          Vue.set(this$1.state.updatingLinks, link.id, link);
+          if(link.points.length < 2) {
 						return;
-					} else {
-						if (link.source !== null) {
-							Vue.set(link.points, 0, _this2.getPortCenter(_this2.getNode(link.source), link.sourcePort));
+					}else{
+						if(link.source !== null) {
+							Vue.set(link.points, 0, this$1.getPortCenter(this$1.getNode(link.source),link.sourcePort));
 						}
-						if (link.target !== null) {
-							Vue.set(link.points, link.points.length - 1, _this2.getPortCenter(_this2.getNode(link.target), link.targetPort));
+						if(link.target !== null) {
+							Vue.set(link.points, link.points.length-1, this$1.getPortCenter(this$1.getNode(link.target),link.targetPort));
 						}
 					}
 				});
@@ -18601,199 +18615,201 @@ var Engine = function () {
 			this.update();
 		},
 
-		update: function update() {
-			this.fireEvent({ type: 'repaint' });
+		update: function(){
+			this.fireEvent({type:'repaint'});
 		},
 
-		getRelativeMousePoint: function getRelativeMousePoint(event) {
-			var point = this.getRelativePoint(event.pageX, event.pageY);
+		getRelativeMousePoint: function(event){
+			var point = this.getRelativePoint(event.pageX,event.pageY);
 			return {
-				x: point.x / (this.state.zoom / 100.0) - this.state.offsetX,
-				y: point.y / (this.state.zoom / 100.0) - this.state.offsetY
+				x:(point.x/(this.state.zoom/100.0))-this.state.offsetX,
+				y:(point.y/(this.state.zoom/100.0))-this.state.offsetY
 			};
 		},
 
-		getRelativePoint: function getRelativePoint(x, y) {
+		getRelativePoint: function(x,y){
 			var canvasRect = this.state.canvas.getBoundingClientRect();
-			return { x: x - canvasRect.left, y: y - canvasRect.top };
+			return {x: x-canvasRect.left,y:y-canvasRect.top};
 		},
 
-		fireEvent: function fireEvent(event) {
-			forEach(this.state.listeners, function (listener) {
+		fireEvent: function(event){
+			forEach(this.state.listeners,function(listener){
 				listener(event);
 			});
 		},
 
-		removeListener: function removeListener(id) {
+		removeListener: function(id){
 			Vue.delete(this.state.listeners, id);
 		},
 
-		removeAllListeners: function removeAllListeners(id) {
+		removeAllListeners: function(id){
 			this.state.listeners = {};
 		},
 
-		registerListener: function registerListener(cb) {
+		registerListener: function(cb){
 			var id = this.UID();
 			this.state.listeners[id] = cb;
 			return id;
 		},
 
-		setZoom: function setZoom(zoom) {
+		setZoom: function(zoom){
 			this.state.zoom = zoom;
 			this.update();
 		},
 
-		setOffset: function setOffset(x, y) {
+		setOffset: function(x,y){
 			this.state.offsetX = x;
 			this.state.offsetY = y;
 			this.update();
 		},
 
-		loadModel: function loadModel(model) {
+		loadModel: function(model){
 			this.state.links = {};
 			this.state.nodes = {};
 
-			model.nodes.forEach(function (node) {
+			model.nodes.forEach(function(node){
 				this.addNode(node);
 			}.bind(this));
 
-			model.links.forEach(function (link) {
+			model.links.forEach(function(link){
 				this.addLink(link);
 			}.bind(this));
 		},
 
-		generateLinkPoints: function generateLinkPoints() {
-			var _this3 = this;
+		generateLinkPoints: function generateLinkPoints(){
+      var this$1 = this;
 
-			forEach(this.state.links, function (link) {
-				if (link.points.length === 0) {
-					link.points.push(_this3.getPortCenter(_this3.getNode(link.source), link.sourcePort));
-					link.points.push(_this3.getPortCenter(_this3.getNode(link.target), link.targetPort));
-				}
-			});
+      forEach(this.state.links, function (link) {
+        if(link.points.length === 0){
+          link.points.push(Object.assign({}, this$1.getPortCenter(this$1.getNode(link.source),link.sourcePort),
+						{id: this$1.UID()}));
+          link.points.push(Object.assign({}, this$1.getPortCenter(this$1.getNode(link.target),link.targetPort),
+						{id: this$1.UID()}));
+        }
+      });
 		},
 
 
-		updateNode: function updateNode(node) {
+
+		updateNode: function(node){
 
 			//find the links and move those as well
 			this.getNodeLinks(node);
-			this.fireEvent({ type: 'repaint' });
+			this.fireEvent({type:'repaint'});
 		},
 
-		UID: function UID() {
-			return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-				var r = Math.random() * 16 | 0,
-				    v = c == 'x' ? r : r & 0x3 | 0x8;
+		UID: function(){
+			return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+				var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
 				return v.toString(16);
 			});
 		},
 
-		getNodePortElement: function getNodePortElement(node, port) {
-			return this.state.canvas.querySelector('.port[data-name="' + port + '"][data-nodeid="' + node.id + '"]');
+		getNodePortElement: function(node,port){
+			return this.state.canvas.querySelector('.port[data-name="'+port+'"][data-nodeid="'+node.id+'"]');
 		},
 
-		getNodePortLinks: function getNodePortLinks(node, port) {
+		getNodePortLinks: function(node,port){
 			var nodeID = this.getNodeID(node);
 			var links = this.getNodeLinks(nodeID);
-			return links.filter(function (link) {
-				if (link.target === nodeID && link.targetPort === port) {
+			return links.filter(function(link){
+				if(link.target === nodeID && link.targetPort === port){
 					return true;
-				} else if (link.source === nodeID && link.sourcePort === port) {
+				}
+				else if(link.source === nodeID && link.sourcePort === port){
 					return true;
 				}
 				return false;
 			});
 		},
 
-		getNodeID: function getNodeID(node) {
-			if ((typeof node === 'undefined' ? 'undefined' : _typeof$1(node)) === 'object') {
+		getNodeID: function(node){
+			if(typeof node === 'object'){
 				node = node.id;
 			}
 			return node;
 		},
 
-		getNodeLinks: function getNodeLinks(node) {
+		getNodeLinks: function(node){
 			var nodeID = this.getNodeID(node);
-			return values(filter(this.state.links, function (link, index) {
+			return values(filter(this.state.links,function(link,index){
 				return link.source == nodeID || link.target == nodeID;
 			}));
 		},
 
-		removeLink: function removeLink(link) {
-			var _this4 = this;
+		removeLink: function removeLink(link, bypassValidation) {
+      var this$1 = this;
+      if ( bypassValidation === void 0 ) bypassValidation = false;
 
-			var bypassValidation = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+      if (typeof link !== 'object') { link = this.getLink(link); }
+      var validator$ = bypassValidation ? validatorNoop$1() : this.state.validators.onEdgeRemove(link);
+      validator$.then(function (valid) {
+        if (valid) {
+          Vue.delete(this$1.state.links, link.id);
+          this$1.update();
+          this$1.fireEvent({
+            type:'link:remove',
+            data: link
+          });
+        }
+      });
 
-			if ((typeof link === 'undefined' ? 'undefined' : _typeof$1(link)) !== 'object') link = this.getLink(link);
-			var validator$ = bypassValidation ? validatorNoop$1() : this.state.validators.onEdgeRemove(link);
-			validator$.then(function (valid) {
-				if (valid) {
-					Vue.delete(_this4.state.links, link.id);
-					_this4.update();
-					_this4.fireEvent({
-						type: 'link:remove',
-						data: link
-					});
-				}
-			});
-		},
-		removeNode: function removeNode(node) {
-			var _this5 = this;
-
-			var bypassValidation = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-
-			if ((typeof node === 'undefined' ? 'undefined' : _typeof$1(node)) !== 'object') node = this.getNode(node);
-			var validator$ = bypassValidation ? validatorNoop$1() : this.state.validators.onNodeRemove(node);
-			validator$.then(function (valid) {
-				if (valid) {
-					//remove the links
-					var links = _this5.getNodeLinks(node);
-					links.forEach(function (link) {
-						_this5.removeLink(link, true);
-					});
-
-					//remove the node
-					Vue.delete(_this5.state.nodes, node.id);
-					// this.update()
-					_this5.fireEvent({
-						type: 'node:remove',
-						data: node
-					});
-				}
-			});
 		},
 
+		removeNode: function removeNode(node, bypassValidation){
+      var this$1 = this;
+      if ( bypassValidation === void 0 ) bypassValidation = false;
 
-		getPortCenter: function getPortCenter(node, port) {
-			var sourceElement = this.getNodePortElement(node, port);
+      if (typeof node !== 'object') { node = this.getNode(node); }
+      var validator$ = bypassValidation ? validatorNoop$1() : this.state.validators.onNodeRemove(node);
+      validator$.then(function (valid) {
+        if (valid) {
+          //remove the links
+    			var links = this$1.getNodeLinks(node);
+    			links.forEach(function (link) {
+    				this$1.removeLink(link, true);
+    			});
+
+    			//remove the node
+          Vue.delete(this$1.state.nodes, node.id);
+    			// this.update()
+    			this$1.fireEvent({
+    				type:'node:remove',
+    				data: node
+    			});
+        }
+      });
+		},
+
+		getPortCenter: function(node,port){
+			var sourceElement = this.getNodePortElement(node,port);
 			var sourceRect = sourceElement.getBoundingClientRect();
 
-			var rel = this.getRelativePoint(sourceRect.left, sourceRect.top);
+			var rel = this.getRelativePoint(sourceRect.left,sourceRect.top);
 
 			return {
-				x: sourceElement.offsetWidth / 2 + rel.x / (this.state.zoom / 100.0) - this.state.offsetX,
-				y: sourceElement.offsetHeight / 2 + rel.y / (this.state.zoom / 100.0) - this.state.offsetY
+				x: ((sourceElement.offsetWidth/2)+rel.x/(this.state.zoom/100.0)) -(this.state.offsetX),
+				y: ((sourceElement.offsetHeight/2)+rel.y/(this.state.zoom/100.0)) -(this.state.offsetY)
 			};
 		},
 
-		setSelectedNode: function setSelectedNode(node) {
+		setSelectedNode: function(node){
 			// this.state.selectedLink = null;
 			this.state.selectedNode = node;
-			this.fireEvent({
-				type: 'node:select',
-				data: node
-			});
+      this.fireEvent({
+        type:'node:select',
+        data: node
+      });
 			// this.state.updatingNodes =  null;
 			// this.state.updatingLinks = null;
 			this.update();
 		},
 
-		setSelectedLink: function setSelectedLink(link) {
+		setSelectedLink: function(link){
 			// this.state.selectedNode = null;
 			this.state.selectedLink = link;
-			this.fireEvent({
-				type: 'link:select',
+      this.fireEvent({
+				type:'link:select',
 				data: link
 			});
 			// this.state.updatingNodes = null;
@@ -18801,213 +18817,202 @@ var Engine = function () {
 			this.update();
 		},
 
-		addLink: function addLink(link) {
-			var FinalLink = link = _extends$1({
-				id: this.UID(),
+		addLink: function(link){
+			var FinalLink = link = Object.assign({}, {id: this.UID(),
 				source: null,
 				sourcePort: null,
 				target: null,
 				targetPort: null,
-				points: []
-			}, link);
+				points: []},
+        link);
 
 			Vue.set(this.state.links, FinalLink.id, FinalLink);
 			this.fireEvent({
-				type: 'link:add',
+				type:'link:add',
 				data: FinalLink
 			});
 			return FinalLink;
 		},
 
-		addNode: function addNode(node, event) {
-			var point = { x: 0, y: 0 };
-			if (event !== undefined) {
+		addNode: function(node,event){
+			var point = {x:0,y:0};
+			if(event !== undefined){
 				point = this.getRelativeMousePoint(event);
 			}
 
-			var FinalNode = defaults(node, {
+			var FinalNode = defaults(node,{
 				id: this.UID(),
 				type: 'default',
-				data: {},
+				data:{},
 				x: point.x,
 				y: point.y
 			});
 			Vue.set(this.state.nodes, FinalNode.id, FinalNode);
 			this.fireEvent({
-				type: 'node:add',
-				data: FinalNode
+				type:'node:add',
+				data: FinalNode,
 			});
+
 		},
 
-		getLink: function getLink(id) {
+		getLink: function(id){
 			return this.state.links[id];
 		},
 
-		getPoint: function getPoint(id) {
-			var allPoints = flatMap(this.state.links, function (_ref) {
-				var points = _ref.points;
-				return points;
-			});
+		getPoint: function(id){
+      var allPoints = flatMap(this.state.links, function (ref) {
+      	var points = ref.points;
+
+      	return points;
+      });
 			var point = find(allPoints, { id: id });
-			console.log(point);
-			return point;
+      console.log(point);
+      return point
 		},
 
-		getNode: function getNode(id) {
+		getNode: function(id){
 			return this.state.nodes[id];
 		},
 
-		getNodeFactory: function getNodeFactory(type) {
-			if (this.state.factories[type] === undefined) {
-				throw "Cannot find node factory for: " + type;
+		getNodeFactory: function(type){
+			if(this.state.factories[type] === undefined){
+				throw "Cannot find node factory for: "+type;
 			}
 			return this.state.factories[type];
 		},
 
-		registerNodeFactory: function registerNodeFactory(factory) {
-			var FinalModel = defaults(factory, {
+		registerNodeFactory: function(factory){
+			var FinalModel = defaults(factory,{
 				type: "factory",
-				isPortAllowed: function isPortAllowed(sourceNode, sourceport, targetNode, targetPort) {
+				isPortAllowed: function(sourceNode,sourceport,targetNode,targetPort){
 					return true;
 				},
-				generateModel: function generateModel(model, engine) {
+				generateModel: function(model,engine){
 					return null;
 				}
 			});
 			this.state.factories[FinalModel.type] = FinalModel;
 		},
 
-		registerValidators: function registerValidators(validators) {
-			this.state.validators = defaults(validators, this.state.validators);
+		registerValidators: function(validators){
+			this.state.validators = defaults(
+        validators,
+        this.state.validators
+      );
 		}
 	};
 };
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
 var DEFAULT_TEMPLATE = ['default', basicNodeWidget, {}];
 
-var validatorNoop = function validatorNoop(node) {
-  return Promise.resolve(true);
-};
+var validatorNoop = function (node) { return Promise.resolve(true) };
 
 var DEFAULTS_OPTS = {
   onNodeRemove: validatorNoop,
   onEdgeRemove: validatorNoop,
-  onEdgeUpdate: validatorNoop
+  onEdgeUpdate: validatorNoop,
 };
 
-var vueFlowchart = { render: function render() {
-    var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', { staticClass: "vue-flowchart" }, [_c('canvas-widget', { attrs: { "engine": _vm.engine } })], 1);
-  }, staticRenderFns: [],
+
+var vueFlowchart = {render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"vue-flowchart"},[_c('canvas-widget',{attrs:{"engine":_vm.engine}})],1)},staticRenderFns: [],
   props: {
     data: {
-      required: true
+      required: true,
     },
     nodeTemplates: {
-      default: function _default() {
-        return [DEFAULT_TEMPLATE];
-      }
+      default: function () { return [
+         DEFAULT_TEMPLATE
+      ]; }
     },
     options: {
-      default: function _default() {
-        return DEFAULTS_OPTS;
-      }
-    }
+      default: function () { return DEFAULTS_OPTS; }
+    },
   },
   components: {
-    canvasWidget: canvasWidget
+    canvasWidget: canvasWidget,
   },
   created: function created() {
-    var _this = this;
+    var this$1 = this;
 
-    [DEFAULT_TEMPLATE].concat(_toConsumableArray(this.nodeTemplates)).forEach(function (_ref) {
-      var _ref2 = _slicedToArray(_ref, 3),
-          type = _ref2[0],
-          component = _ref2[1],
-          _ref2$ = _ref2[2],
-          opts = _ref2$ === undefined ? {} : _ref2$;
+    ([DEFAULT_TEMPLATE ].concat( this.nodeTemplates)).forEach(function (ref) {
+      var type = ref[0];
+      var component = ref[1];
+      var opts = ref[2]; if ( opts === void 0 ) opts = {};
 
-      var engine = _this.engine;
-      _this.engine.registerNodeFactory({
+      var engine = this$1.engine;
+      this$1.engine.registerNodeFactory({
         type: type,
         generateModel: function generateModel(model) {
           return {
             component: component,
-            propsData: _extends({
-              removeAction: function removeAction() {
+            propsData: Object.assign({}, {removeAction: function () {
                 engine.removeNode(model);
               },
               // color: model.data.color,
-              node: model
-            }, model.data, opts)
-          };
+              node: model},
+              // name: model.data.name,
+              // inPorts: model.data.inVariables,
+              // outPorts: model.data.outVariables,
+              model.data,
+              opts)
+          }
         }
       });
     });
-    var _options = this.options,
-        onNodeRemove = _options.onNodeRemove,
-        onEdgeRemove = _options.onEdgeRemove,
-        onEdgeUpdate = _options.onEdgeUpdate;
-
+    var ref = this.options;
+    var onNodeRemove = ref.onNodeRemove;
+    var onEdgeRemove = ref.onEdgeRemove;
+    var onEdgeUpdate = ref.onEdgeUpdate;
     this.engine.registerValidators({ onNodeRemove: onNodeRemove, onEdgeRemove: onEdgeRemove, onEdgeUpdate: onEdgeUpdate });
     this.initializeModel();
   },
-
-  watch: {
-    // data: {
-    //   deep: true,
-    //   handler() {
-    //     this.initializeModel()
-    //   }
-    // }
-  },
+  // watch: {
+  //   data: {
+  //     handler() {
+  //       this.initializeModel()
+  //     }
+  //   }
+  // },
   data: function data() {
     return {
-      engine: Engine()
-    };
+      engine: Engine(),
+    }
   },
-
   methods: {
     initializeModel: function initializeModel() {
-      var _this2 = this;
+      var this$1 = this;
 
       this.engine.loadModel(this.data);
       this.$nextTick(function () {
-        _this2.engine.generateLinkPoints();
+        this$1.engine.generateLinkPoints();
       });
     },
     addNode: function addNode(node) {
       this.engine.addNode(node);
     },
-    removeNode: function removeNode(id) {
-      var bypassValidation = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+    removeNode: function removeNode(id, bypassValidation) {
+      if ( bypassValidation === void 0 ) bypassValidation = false;
 
       this.engine.removeNode(id, bypassValidation);
     },
-    addLink: function addLink(link) {
-      var bypassValidation = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+    addLink: function addLink(link, bypassValidation) {
+      if ( bypassValidation === void 0 ) bypassValidation = false;
 
       this.engine.addLink(link, bypassValidation);
     },
     removeLink: function removeLink(id) {
       this.engine.removeLink(id);
-    }
+    },
   },
   destroyed: function destroyed() {
     this.engine.removeListener(this._listenerID);
   },
   mounted: function mounted() {
-    var _this3 = this;
+    var this$1 = this;
 
-    var listenerID = this.engine.registerListener(function (_ref3) {
-      var type = _ref3.type,
-          _ref3$data = _ref3.data,
-          data = _ref3$data === undefined ? {} : _ref3$data;
+    var listenerID = this.engine.registerListener(function (ref) {
+      var type = ref.type;
+      var data = ref.data; if ( data === void 0 ) data = {};
 
       // if (type === 'repaint'){
       //
@@ -19020,10 +19025,10 @@ var vueFlowchart = { render: function render() {
       // } else if (type === 'remove:link') {
       //
       // }
-      _this3.$emit(type, data);
+      this$1.$emit(type, data);
     });
     this._listenerID = listenerID;
-  }
+  },
 };
 
 // export default {}
@@ -19031,3 +19036,4 @@ var vueFlowchart = { render: function render() {
 // export Engine from './lib/Engine.js'
 
 export { portWidget };export default vueFlowchart;
+//# sourceMappingURL=vue-flowchart.esm.js.map

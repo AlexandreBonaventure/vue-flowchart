@@ -59,14 +59,13 @@
       this.engine.registerValidators({ onNodeRemove, onEdgeRemove, onEdgeUpdate })
       this.initializeModel()
     },
-    watch: {
-      // data: {
-      //   deep: true,
-      //   handler() {
-      //     this.initializeModel()
-      //   }
-      // }
-    },
+    // watch: {
+    //   data: {
+    //     handler() {
+    //       this.initializeModel()
+    //     }
+    //   }
+    // },
     data() {
       return {
         engine: Engine(),

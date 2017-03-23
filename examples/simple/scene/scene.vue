@@ -9,6 +9,7 @@
     data() {
       return {
         data: fixtureDatas(),
+        // data: null,
         templates: [
           ['custom', customWidget],
         ],
@@ -29,9 +30,10 @@
       }
     },
     mounted() {
-      // setInterval(() => {
-      //   this.data = fixtureDatas()
-      // }, 5000)
+      setInterval(() => {
+        this.data = fixtureDatas()
+        console.log(this.data);
+      }, 5000)
     },
     methods: {
       log(...args) {

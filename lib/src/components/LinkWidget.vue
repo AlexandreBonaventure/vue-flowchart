@@ -117,20 +117,12 @@
           [
             Bottom,
             Top
-          ],
+          ]
     		)
     	},
     },
-    computed: {
-
-    },
     render(h) {
       var points = this.link.points
-  		points.forEach((point) => {
-  			if(point.id === undefined) {
-  				point.id = this.engine.UID()
-  			}
-  		})
   		var paths = []
   		if(points.length === 2) {
   			var margin = 50

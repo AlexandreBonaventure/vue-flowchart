@@ -3,6 +3,7 @@ import vue from 'rollup-plugin-vue'
 import nodeResolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import scss from 'rollup-plugin-scss';
+import buble from 'rollup-plugin-buble';
 
 export default {
   plugins: [
@@ -16,7 +17,7 @@ export default {
       // output: true,
       //
       // // Filename to write all styles to
-      // output: 'bundle.css',
+      output: 'dist/vue-flowchart.css',
       //
       // // Callback that will be called ongenerate with two arguments:
       // // - styles: the contents of all style tags combined: 'body { color: green }'
@@ -28,9 +29,10 @@ export default {
       // // Disable any style output or callbacks, import as string
       // output: false
     }),
-    babel({
-      exclude: ['node_modules/**', '*.vue'],
-    }),
+    // babel({
+    //   exclude: ['node_modules/**', '*.vue'],
+    // }),
+    buble({objectAssign: 'Object.assign'}),
     nodeResolve({
       browser: true,
       jsnext: true,
@@ -44,4 +46,5 @@ export default {
   external: [
     'vue',
   ],
+  sourceMap: true,
 }
