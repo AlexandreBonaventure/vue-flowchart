@@ -59,13 +59,13 @@
       this.engine.registerValidators({ onNodeRemove, onEdgeRemove, onEdgeUpdate })
       this.initializeModel()
     },
-    // watch: {
-    //   data: {
-    //     handler() {
-    //       this.initializeModel()
-    //     }
-    //   }
-    // },
+    watch: {
+      data: {
+        handler() {
+          this.initializeModel()
+        }
+      }
+    },
     data() {
       return {
         engine: Engine(),
@@ -96,17 +96,6 @@
     },
     mounted() {
       var listenerID = this.engine.registerListener(({ type, data = {} }) => {
-        // if (type === 'repaint'){
-        //
-        // } else if (type === 'add:node') {
-        //
-        // } else if (type === 'remove:node') {
-        //
-        // } else if (type === 'add:link') {
-        //
-        // } else if (type === 'remove:link') {
-        //
-        // }
         this.$emit(type, data)
       })
       this._listenerID = listenerID

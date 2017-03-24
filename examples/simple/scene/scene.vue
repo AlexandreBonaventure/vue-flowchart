@@ -30,10 +30,10 @@
       }
     },
     mounted() {
-      setInterval(() => {
-        this.data = fixtureDatas()
-        console.log(this.data);
-      }, 5000)
+      // setInterval(() => {
+      //   this.data = fixtureDatas()
+      //   console.log(this.data);
+      // }, 1000)
     },
     methods: {
       log(...args) {

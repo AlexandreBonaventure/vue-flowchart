@@ -18625,6 +18625,20 @@ var Engine = function() {
 			this.fireEvent({type:'repaint'});
 		},
 
+		getNodeDimensions: function getNodeDimensions(){
+			var this$1 = this;
+
+			var nodes = this.state.nodes;
+			var dimensions = mapValues(nodes, function (node, id) {
+				var el = this$1.getNodeElement(id);
+				var ref = el.getBoundingClientRect();
+				var width = ref.width;
+				var height = ref.height;
+				return { width: width, height: height }
+			});
+			return dimensions
+		},
+
 		getRelativeMousePoint: function(event){
 			var point = this.getRelativePoint(event.pageX,event.pageY);
 			return {
@@ -18711,6 +18725,9 @@ var Engine = function() {
 			});
 		},
 
+		getNodeElement: function(id){
+			return this.state.canvas.querySelector((".node[data-nodeid=\"" + id + "\"]"));
+		},
 		getNodePortElement: function(node,port){
 			return this.state.canvas.querySelector('.port[data-name="'+port+'"][data-nodeid="'+node.id+'"]');
 		},
@@ -18972,13 +18989,13 @@ var vueFlowchart = {render: function(){var _vm=this;var _h=_vm.$createElement;va
     this.engine.registerValidators({ onNodeRemove: onNodeRemove, onEdgeRemove: onEdgeRemove, onEdgeUpdate: onEdgeUpdate });
     this.initializeModel();
   },
-  // watch: {
-  //   data: {
-  //     handler() {
-  //       this.initializeModel()
-  //     }
-  //   }
-  // },
+  watch: {
+    data: {
+      handler: function handler() {
+        this.initializeModel();
+      }
+    }
+  },
   data: function data() {
     return {
       engine: Engine(),
