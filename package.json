@@ -8,6 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:umd": "rollup -c --name vueFlowchart --input index.js --output dist/vue-flowchart.js --format umd",
     "build:es": "rollup -c --name vueFlowchart --input index.js --output dist/vue-flowchart.esm.js --format es",
+    "watch:es": "rollup -cw --name vueFlowchart --input index.js --output dist/vue-flowchart.esm.js --format es",
     "build": "npm run build:umd && npm run build:es",
     "serve": "NODE_PATH=$NODE_PATH:lib:examples/simple budo examples/simple/index.js --open -d . --live -- -t [ vueify ] -g babelify",
     "//dist": "NODE_PATH=$NODE_PATH:examples/simple browserify -e examples/simple/index.js -o dist/index.js -t vueify -t [ babelify ] -t uglifyify -p [ minifyify --no-map ]"
@@ -47,6 +48,7 @@
     "browserify-shim": "^3.8.12",
     "budo": "^9.2.2",
     "bundle-collapser": "^1.2.1",
+    "express-middleware-rollup": "^1.1.1",
     "jade": "^1.11.0",
     "js-data": "^2.9.0",
     "minifyify": "^7.3.4",
@@ -58,6 +60,7 @@
     "rollup-plugin-node-resolve": "^2.0.0",
     "rollup-plugin-scss": "^0.2.0",
     "rollup-plugin-vue": "2.3.1",
+    "rollup-watch": "^3.2.2",
     "uglifyify": "^3.0.4",
     "vue": "2.2.4",
     "vue-hot-reload-api": "^1.3.3",

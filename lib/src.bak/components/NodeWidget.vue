@@ -5,6 +5,9 @@
   export default {
     name: "NodeWidget",
     props: {
+			engine: {
+        required: true,
+      },
 			node: {
         required: true,
       },
@@ -16,7 +19,7 @@
     },
     methods: {
       onMouseDown(){
-        // this.engine.setSelectedNode(this.node)
+        this.engine.setSelectedNode(this.node)
       }
     },
     computed: {

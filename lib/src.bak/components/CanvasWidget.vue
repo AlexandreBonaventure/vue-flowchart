@@ -14,29 +14,59 @@
       nodeView,
       svgWidget,
     },
-    inject: ['zoom'],
     props: {
-			zoom: {
+			engine: {
         required: true,
       }
 		},
     data() {
       return {
+        selectedPointID: null,
+        selectedLink: null,
+        selectedPort: null,
+        selectedModel: null,
         initialX: null,
         initialY: null,
         initialObjectX: null,
         initialObjectY: null,
+        listenerID: null,
+
+        newPoint(link, pointID) { //
+          return this.$set({
+						selectedPointID: pointID,
+						selectedLink: link
+					})
+        },
       }
     },
 
     mounted() {
+      this.engine.state.canvas = this.$refs.canvas
 
+
+      //check for any links that dont have points
+      // forEach(this.engine.state.links, (link) => {
+      //   if(link.points.length === 0){
+      //     link.points.push(this.engine.getPortCenter(this.engine.getNode(link.source),link.sourcePort));
+      //     link.points.push(this.engine.getPortCenter(this.engine.getNode(link.target),link.targetPort));
+      //     // this.forceUpdate();
+      //   }
+      // })
+
+
+      //add a keybaord listener
+      this.windowListener = window.addEventListener('keydown', (event) => {
+        if(event.keyCode === 46){
+          if(this.engine.state.selectedLink){
+            this.engine.removeLink(this.engine.state.selectedLink)
+          } else if(this.engine.state.selectedNode) {
+            this.engine.removeNode(this.engine.state.selectedNode)
+          }
+        }
+      })
+      window.focus()
     },
-
     methods: {
-      setZoom() {
-
-      },
       resetState() {
         this.setState({
           selectedLink: null,
@@ -211,10 +241,17 @@
 </script>
 
 <template>
-  <div class="storm-flow-canvas" ref="canvas">
-    <svg-widget></svg-widget>
-    <node-view></node-view>
+  <div class="storm-flow-canvas" ref="canvas"
+    @wheel="onWheel"
+    @mousemove="onMouseMove"
+    @mousedown="onMouseDown"
+    @mouseup="onMouseUp">
+    <svg-widget :engine="engine" :new-point="newPoint"></svg-widget>
+    <node-view :engine="engine"></node-view>
   </div>
+
+
+
 </template>
 
 <style lang="scss">
